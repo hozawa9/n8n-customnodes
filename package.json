@@ -1,5 +1,5 @@
 {
-  "name": "n8n-nodes-<...>",
+  "name": "my-first-custom-node-test",
   "version": "0.1.0",
   "description": "",
   "keywords": [
@@ -53,6 +53,6 @@
     "typescript": "^5.5.3"
   },
   "peerDependencies": {
-    "n8n-workflow": "*"
+    "n8n-workflow": "^1.62.0"
   }
 }
