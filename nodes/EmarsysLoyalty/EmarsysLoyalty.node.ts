@@ -100,6 +100,34 @@ export class EmarsysLoyalty implements INodeType {
 				],
 				default: 'referralFriendContent',
 			},
+			// Add x-contact-id and x-language only for contact:contact
+			{
+				displayName: 'Contact External ID',
+				name: 'xContactId',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: {
+					show: {
+						resource: ['contact'],
+						action: ['contact'],
+					},
+				},
+				description: 'External ID of the contact (required)',
+			},
+			{
+				displayName: 'Language (ISO Code)',
+				name: 'xLanguage',
+				type: 'string',
+				default: '',
+				displayOptions: {
+					show: {
+						resource: ['contact'],
+						action: ['contact'],
+					},
+				},
+				description: 'Optional. Example: en, es, zh-CN etc.',
+			},
 		],
 	};
 
@@ -123,17 +151,30 @@ export class EmarsysLoyalty implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const credentials = await this.getCredentials('emarsysLoyaltyApi');
-				const url = `${baseUrl}${endpointMap[action]}`;
+				const url = `${baseUrl}${endpointMap[action]}`
+				const headers: { [key: string]: string } = {
+					[credentials.name as string]: credentials.value as string,
+					'Content-Type': 'application/json',
+				};
+
+				// 特定アクションにヘッダー追加
+				if (action === 'contact') {
+					const xContactId = this.getNodeParameter('xContactId', i) as string;
+					const xLanguage = this.getNodeParameter('xLanguage', i) as string;
+					headers['x-contact-id'] = xContactId;
+					if (xLanguage) {
+						headers['x-language'] = xLanguage;
+					}
+				}
+
 				const response = await this.helpers.request({
 					method: 'GET',
 					url,
-					headers: {
-						'Authorization': `Bearer ${credentials.apiKey}`,
-						'Content-Type': 'application/json',
-					},
+					headers,
 				});
 
-				returnData.push({ json: response });
+				const parsed = typeof response === 'string' ? JSON.parse(response) : response;
+				returnData.push({ json: parsed });
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({ json: { error: error.message } });
