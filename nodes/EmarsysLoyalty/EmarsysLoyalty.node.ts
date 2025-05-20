@@ -45,11 +45,7 @@ export class EmarsysLoyalty implements INodeType {
 				displayName: 'Action',
 				name: 'action',
 				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['contact'],
-					},
-				},
+				displayOptions: { show: { resource: ['contact'] } },
 				options: [
 					{ name: "Get Contact Info", value: 'contact' },
 					{ name: "Get Contact Activities", value: 'activities' },
@@ -61,11 +57,7 @@ export class EmarsysLoyalty implements INodeType {
 				displayName: 'Action',
 				name: 'action',
 				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['actions'],
-					},
-				},
+				displayOptions: { show: { resource: ['actions'] } },
 				options: [
 					{ name: "Get Contact Actions", value: 'actions' },
 				],
@@ -75,11 +67,7 @@ export class EmarsysLoyalty implements INodeType {
 				displayName: 'Action',
 				name: 'action',
 				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['tiers'],
-					},
-				},
+				displayOptions: { show: { resource: ['tiers'] } },
 				options: [
 					{ name: "Get Contact Tiers", value: 'tiers' },
 				],
@@ -89,18 +77,13 @@ export class EmarsysLoyalty implements INodeType {
 				displayName: 'Action',
 				name: 'action',
 				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['referral'],
-					},
-				},
+				displayOptions: { show: { resource: ['referral'] } },
 				options: [
 					{ name: "Get Referral Content", value: 'referralFriendContent' },
 					{ name: "Get Referrals", value: 'referrals' },
 				],
 				default: 'referralFriendContent',
 			},
-			// Add x-contact-id and x-language only for contact:contact
 			{
 				displayName: 'Contact External ID',
 				name: 'xContactId',
@@ -109,8 +92,9 @@ export class EmarsysLoyalty implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						resource: ['contact'],
-						action: ['contact'],
+						action: [
+							'contact', 'activities', 'hash', 'actions', 'tiers', 'referralFriendContent', 'referrals'
+						]
 					},
 				},
 				description: 'External ID of the contact (required)',
@@ -122,11 +106,49 @@ export class EmarsysLoyalty implements INodeType {
 				default: '',
 				displayOptions: {
 					show: {
-						resource: ['contact'],
-						action: ['contact'],
+						action: [
+							'contact', 'activities', 'actions', 'tiers', 'referralFriendContent', 'referrals'
+						]
 					},
 				},
 				description: 'Optional. Example: en, es, zh-CN etc.',
+			},
+			{
+				displayName: 'Currency Code',
+				name: 'xCurrency',
+				type: 'string',
+				default: '',
+				displayOptions: {
+					show: {
+						action: ['actions']
+					},
+				},
+				description: 'Optional. Example: USD, EUR',
+			},
+			{
+				displayName: 'Market Code',
+				name: 'xMarket',
+				type: 'string',
+				default: '',
+				displayOptions: {
+					show: {
+						action: ['tiers', 'referralFriendContent', 'referrals']
+					},
+				},
+				description: 'Optional market identifier code.',
+			},
+			{
+				displayName: 'Referral ID',
+				name: 'xReferralId',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: {
+					show: {
+						action: ['referralFriendContent']
+					},
+				},
+				description: 'The referralId which is returned when getting a contact\'s referrals.',
 			},
 		],
 	};
@@ -151,30 +173,34 @@ export class EmarsysLoyalty implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const credentials = await this.getCredentials('emarsysLoyaltyApi');
-				const url = `${baseUrl}${endpointMap[action]}`
+				const url = `${baseUrl}${endpointMap[action]}`;
 				const headers: { [key: string]: string } = {
 					[credentials.name as string]: credentials.value as string,
 					'Content-Type': 'application/json',
 				};
 
-				// 特定アクションにヘッダー追加
-				if (action === 'contact') {
-					const xContactId = this.getNodeParameter('xContactId', i) as string;
-					const xLanguage = this.getNodeParameter('xLanguage', i) as string;
-					headers['x-contact-id'] = xContactId;
-					if (xLanguage) {
-						headers['x-language'] = xLanguage;
-					}
-				}
+				headers['x-contact-id'] = this.getNodeParameter('xContactId', i) as string;
+				const xLanguage = this.getNodeParameter('xLanguage', i, '') as string;
+				if (xLanguage) headers['x-language'] = xLanguage;
+				const xCurrency = this.getNodeParameter('xCurrency', i, '') as string;
+				if (xCurrency) headers['x-currency'] = xCurrency;
+				const xMarket = this.getNodeParameter('xMarket', i, '') as string;
+				if (xMarket) headers['x-market'] = xMarket;
+				const xReferralId = this.getNodeParameter('xReferralId', i, '') as string;
+				if (xReferralId) headers['x-referral-id'] = xReferralId;
 
 				const response = await this.helpers.request({
 					method: 'GET',
 					url,
 					headers,
+					json: true,
 				});
 
-				const parsed = typeof response === 'string' ? JSON.parse(response) : response;
-				returnData.push({ json: parsed });
+				if (action === 'hash') {
+					returnData.push({ json: { result: typeof response === 'string' ? JSON.parse(response) : response } });
+				} else {
+					returnData.push({ json: response });
+				}
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({ json: { error: error.message } });
