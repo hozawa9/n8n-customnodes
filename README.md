@@ -14,7 +14,7 @@ rebuild-n8nに以下のコマンドをまとめています。（package.jsonに
 
 ```
 rmdir /s /q dist
-npm run build 
+npm run build
 docker-compose restart n8n
 ```
 
@@ -32,8 +32,12 @@ docker push ACCOUNT_ID.dkr.ecr.ap-northeast-1.amazonaws.com/custom-n8n:latest
 
 ## ECS　コンテナの更新
 ```
-
+aws ecs update-service \
+  --cluster CLUSTER_NAME \
+  --service ECS_SERVICE_NAME \
+  --force-new-deployment
 ```
+あるいはマネジメントコンソールのクラスタ＞サービスにて、「強制デプロイ」を実施
 
 ## 参考文献
 - ベースはここ→[Developing Custom Nodes for n8n with Docker - DEV Community](https://dev.to/hubschrauber/developing-custom-nodes-for-n8n-with-docker-3poj)
