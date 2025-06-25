@@ -1,0 +1,130 @@
+[
+  {
+    "displayName": "Resource",
+    "name": "resource",
+    "type": "options",
+    "options": [
+      {
+        "name": "contact",
+        "value": "contact"
+      },
+      {
+        "name": "plan",
+        "value": "plan"
+      },
+      {
+        "name": "actions",
+        "value": "actions"
+      },
+      {
+        "name": "tiers",
+        "value": "tiers"
+      }
+    ],
+    "default": "contact"
+  },
+  {
+    "displayName": "Action",
+    "name": "action",
+    "type": "options",
+    "displayOptions": {
+      "show": {
+        "resource": [
+          "contact"
+        ]
+      }
+    },
+    "options": [
+      {
+        "name": "deleteContact",
+        "value": "deleteContact"
+      },
+      {
+        "name": "addContact",
+        "value": "addContact"
+      },
+      {
+        "name": "getContactLoyaltyInfo",
+        "value": "getContactLoyaltyInfo"
+      },
+      {
+        "name": "getHashedXContactId",
+        "value": "getHashedXContactId"
+      },
+      {
+        "name": "getContactActivities",
+        "value": "getContactActivities"
+      }
+    ],
+    "default": "deleteContact"
+  },
+  {
+    "displayName": "Action",
+    "name": "action",
+    "type": "options",
+    "displayOptions": {
+      "show": {
+        "resource": [
+          "plan"
+        ]
+      }
+    },
+    "options": [
+      {
+        "name": "changeContactLoyaltyPlan",
+        "value": "changeContactLoyaltyPlan"
+      },
+      {
+        "name": "getProgramSettings",
+        "value": "getProgramSettings"
+      }
+    ],
+    "default": "changeContactLoyaltyPlan"
+  },
+  {
+    "displayName": "Action",
+    "name": "action",
+    "type": "options",
+    "displayOptions": {
+      "show": {
+        "resource": [
+          "actions"
+        ]
+      }
+    },
+    "options": [
+      {
+        "name": "getContactActions",
+        "value": "getContactActions"
+      }
+    ],
+    "default": "getContactActions"
+  },
+  {
+    "displayName": "Action",
+    "name": "action",
+    "type": "options",
+    "displayOptions": {
+      "show": {
+        "resource": [
+          "tiers"
+        ]
+      }
+    },
+    "options": [
+      {
+        "name": "getContactTiers",
+        "value": "getContactTiers"
+      },
+      {
+        "name": "downgradeContactTiers",
+        "value": "downgradeContactTiers"
+      },
+      {
+        "name": "upgradeContactTiers",
+        "value": "upgradeContactTiers"
+      }
+    ],
+    "default": "getContactTiers"
+  }
+]

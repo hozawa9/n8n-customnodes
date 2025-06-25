@@ -1,0 +1,123 @@
+[
+  {
+    "displayName": "Resource",
+    "name": "resource",
+    "type": "options",
+    "options": [
+      { "name": "Contact", "value": "contact" },
+      { "name": "Actions", "value": "actions" },
+      { "name": "Tiers", "value": "tiers" },
+      { "name": "Referral", "value": "referral" }
+    ],
+    "default": "contact"
+  },
+  {
+    "displayName": "Action",
+    "name": "action",
+    "type": "options",
+    "displayOptions": { "show": { "resource": ["contact"] } },
+    "options": [
+      { "name": "Get Contact Info", "value": "contact" },
+      { "name": "Get Contact Activities", "value": "activities" },
+      { "name": "Hash Contact Id", "value": "hash" }
+    ],
+    "default": "contact"
+  },
+  {
+    "displayName": "Action",
+    "name": "action",
+    "type": "options",
+    "displayOptions": { "show": { "resource": ["actions"] } },
+    "options": [
+      { "name": "Get Contact Actions", "value": "actions" }
+    ],
+    "default": "actions"
+  },
+  {
+    "displayName": "Action",
+    "name": "action",
+    "type": "options",
+    "displayOptions": { "show": { "resource": ["tiers"] } },
+    "options": [
+      { "name": "Get Contact Tiers", "value": "tiers" }
+    ],
+    "default": "tiers"
+  },
+  {
+    "displayName": "Action",
+    "name": "action",
+    "type": "options",
+    "displayOptions": { "show": { "resource": ["referral"] } },
+    "options": [
+      { "name": "Get Referral Content", "value": "referralFriendContent" },
+      { "name": "Get Referrals", "value": "referrals" }
+    ],
+    "default": "referralFriendContent"
+  },
+  {
+    "displayName": "Contact External ID",
+    "name": "xContactId",
+    "type": "string",
+    "default": "",
+    "required": true,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "contact", "activities", "hash", "actions", "tiers", "referralFriendContent", "referrals"
+        ]
+      }
+    },
+    "description": "External ID of the contact (required)"
+  },
+  {
+    "displayName": "Language (ISO Code)",
+    "name": "xLanguage",
+    "type": "string",
+    "default": "",
+    "displayOptions": {
+      "show": {
+        "action": [
+          "contact", "activities", "actions", "tiers", "referralFriendContent", "referrals"
+        ]
+      }
+    },
+    "description": "Optional. Example: en, es, zh-CN etc."
+  },
+  {
+    "displayName": "Currency Code",
+    "name": "xCurrency",
+    "type": "string",
+    "default": "",
+    "displayOptions": {
+      "show": {
+        "action": ["actions"]
+      }
+    },
+    "description": "Optional. Example: USD, EUR"
+  },
+  {
+    "displayName": "Market Code",
+    "name": "xMarket",
+    "type": "string",
+    "default": "",
+    "displayOptions": {
+      "show": {
+        "action": ["tiers", "referralFriendContent", "referrals"]
+      }
+    },
+    "description": "Optional market identifier code."
+  },
+  {
+    "displayName": "Referral ID",
+    "name": "xReferralId",
+    "type": "string",
+    "default": "",
+    "required": true,
+    "displayOptions": {
+      "show": {
+        "action": ["referralFriendContent"]
+      }
+    },
+    "description": "The referralId which is returned when getting a contact's referrals."
+  }
+]
