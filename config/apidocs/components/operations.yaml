@@ -1,0 +1,22 @@
+title: n8n Operations Parameter
+type: object
+required: [displayName, name, type, noDataExpression, options]
+properties:
+  displayName:      { const: Options }
+  name:             { const: operation }
+  type:             { const: options }
+  noDataExpression: { const: true }
+  options:
+    type: array
+    items: { $ref: "#/definitions/OperationOption" }
+
+definitions:
+  OperationOption:
+    type: object
+    required: [name, value]
+    properties:
+      name:        { type: string }
+      value:       { type: string }
+      action:      { type: string }
+      description: { type: string }
+      routing:     { type: object }

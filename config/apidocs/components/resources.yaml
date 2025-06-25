@@ -1,0 +1,21 @@
+title: n8n Resource Parameter
+type: object
+required: [displayName, name, type, noDataExpression]
+properties:
+  displayName:      { const: Resource }
+  name:             { const: resource }
+  type:             { const: options }
+  noDataExpression: { const: true }
+  default:
+    type: string
+  options:
+    type: array
+    items: { $ref: "#/definitions/Option" }
+
+definitions:
+  Option:
+    type: object
+    required: [name, value]
+    properties:
+      name:  { type: string }
+      value: { type: string }
