@@ -1,0 +1,154 @@
+components:
+  responses:
+    ValidationErrorResponse:
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              errors:
+                type: array
+                items:
+                  type: string
+
+    NotFoundErrorResponse:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+    ServerErrorResponse:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+    responseSuccess:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+    responseGetContactActions:
+      description: Get Contact Actions
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              actions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    actionId:
+                      type: string
+                    actionName:
+                      type: string
+                    actionDescription:
+                      type: string
+                    actionType:
+                      type: string
+
+    responseGetContactActivities:
+      description: Get Contact Activities
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              activities:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    activityId:
+                      type: string
+                    activityType:
+                      type: string
+                    activityDate:
+                      type: string
+                    activityDescription:
+                      type: string
+
+    responseGetContactLoyaltyInfo:
+      description: Get Contact Loyalty Info
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              loyaltyPoints:
+                type: integer
+              loyaltyStatus:
+                type: string
+              loyaltyTier:
+                type: string
+
+    responseGetContactTiers:
+      description: Get Contact Tiers
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tiers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tierId:
+                      type: string
+                    tierName:
+                      type: string
+                    tierDescription:
+                      type: string
+                    tierLevel:
+                      type: integer
+
+    responseGetHashedXContactId:
+      description: Get Hashed XContact ID
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              hashedXContactId:
+                type: string
+                description: The hashed XContact ID for the contact.
+
+    responseGetProgramSettings:
+      description: Get Program Settings
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              programSettings:
+                type: object
+                properties:
+                  planId:
+                    type: string
+                  planName:
+                    type: string
+                  planDescription:
+                    type: string
+                  planBenefits:
+                    type: array
+                    items:
+                      type: string
