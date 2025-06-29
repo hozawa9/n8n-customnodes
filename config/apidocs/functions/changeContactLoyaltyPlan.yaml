@@ -1,0 +1,50 @@
+put:
+  summary: changeContactLoyaltyPlan
+  security: []
+  tags:
+    - plan
+  description: Update the loyalty point balances for a given contact, including balance, pending, status points and redeemed vouchers.
+
+  parameters:
+    - name: xContactId
+      in: header
+      required: true
+      description: Unique identifier for the contact.
+      schema:
+        type: string
+      example: abc123
+
+    - name: xPlanId
+      in: header
+      required: false
+      description: Identifier of the loyalty plan to update.
+      schema:
+        type: string
+      example: plan456
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [balancePoints, pendingPoints, redeemedVouchers, statusPoints]
+          properties:
+            balancePoints:
+              type: integer
+            pendingPoints:
+              type: integer
+            redeemedVouchers:
+              type: integer
+            statusPoints:
+              type: integer
+
+  responses:
+    '200':
+      $ref: '../components/responses.yaml#/components/responses/responseSuccess'
+    '400':
+      $ref: '../components/responses.yaml#/components/responses/ValidationErrorResponse'
+    '404':
+      $ref: '../components/responses.yaml#/components/responses/NotFoundErrorResponse'
+    '500':
+      $ref: '../components/responses.yaml#/components/responses/ServerErrorResponse'

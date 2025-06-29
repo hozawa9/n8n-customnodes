@@ -1,0 +1,49 @@
+post:
+  summary: addContact
+  security: []
+  tags:
+    - contact
+  description: Add a new contact. Optional flags for point allocation and tier expiration can be set via query parameters.
+
+  parameters:
+    - name: withPointsAllocations
+      in: query
+      required: false
+      description: Flag to enable point allocations during contact creation.
+      schema:
+        type: string
+      example: true
+
+    - name: withTierExpiration
+      in: query
+      required: false
+      description: Flag to enable tier expiration processing.
+      schema:
+        type: string
+      example: true
+
+    - name: xContactId
+      in: header
+      required: true
+      description: Unique identifier for the contact being created.
+      schema:
+        type: string
+      example: abc123
+
+    - name: xLanguage
+      in: header
+      required: false
+      description: Preferred language for the contact.
+      schema:
+        type: string
+      example: en
+
+  responses:
+    '200':
+      $ref: '../components/responses.yaml#/components/responses/responseSuccess'
+    '400':
+      $ref: '../components/responses.yaml#/components/responses/ValidationErrorResponse'
+    '404':
+      $ref: '../components/responses.yaml#/components/responses/NotFoundErrorResponse'
+    '500':
+      $ref: '../components/responses.yaml#/components/responses/ServerErrorResponse'

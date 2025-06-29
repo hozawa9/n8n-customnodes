@@ -1,0 +1,49 @@
+put:
+  summary: downgradeContactTiers
+  security: []
+  tags:
+    - tiers
+  description: Downgrade the contact's tier. Optional headers may define the target tier, reason for the change, and exit type.
+
+  parameters:
+    - name: xContactId
+      in: header
+      required: true
+      description: Unique identifier of the contact whose tier is to be downgraded.
+      schema:
+        type: string
+      example: abc123
+
+    - name: xExitTo
+      in: header
+      required: false
+      description: Optional target state to exit to after downgrade.
+      schema:
+        type: string
+      example: inactive
+
+    - name: xReasonForTierChange
+      in: header
+      required: false
+      description: Reason code or explanation for the tier downgrade.
+      schema:
+        type: string
+      example: inactivity
+
+    - name: xTierId
+      in: header
+      required: false
+      description: Tier ID to downgrade the contact to.
+      schema:
+        type: string
+      example: tier_basic
+
+  responses:
+    '200':
+      $ref: '../components/responses.yaml#/components/responses/responseSuccess'
+    '400':
+      $ref: '../components/responses.yaml#/components/responses/ValidationErrorResponse'
+    '404':
+      $ref: '../components/responses.yaml#/components/responses/NotFoundErrorResponse'
+    '500':
+      $ref: '../components/responses.yaml#/components/responses/ServerErrorResponse'

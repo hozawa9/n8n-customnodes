@@ -1,0 +1,33 @@
+delete:
+  summary: deleteContact
+  security: []
+  tags:
+    - contact
+  description: Delete a contact using the xContactId header.
+
+  parameters:
+    - name: xContactId
+      in: header
+      required: true
+      description: Unique identifier for the contact to delete.
+      schema:
+        type: string
+      example: 123456
+
+    - name: xInitiatedBy
+      in: header
+      required: false
+      description: Optional initiator of the deletion request.
+      schema:
+        type: string
+      example: admin_user
+
+  responses:
+    '200':
+      $ref: '../components/responses.yaml#/components/responses/responseSuccess'
+    '400':
+      $ref: '../components/responses.yaml#/components/responses/ValidationErrorResponse'
+    '404':
+      $ref: '../components/responses.yaml#/components/responses/NotFoundErrorResponse'
+    '500':
+      $ref: '../components/responses.yaml#/components/responses/ServerErrorResponse'
