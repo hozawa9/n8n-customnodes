@@ -1,0 +1,41 @@
+get:
+  summary: getContactTiers
+  security: []
+  tags:
+    - tiers
+  description: Retrieve tier information for the specified contact. Optional headers allow localization by language and market.
+
+  parameters:
+    - name: xContactId
+      in: header
+      required: true
+      description: Unique identifier of the contact.
+      schema:
+        type: string
+      example: abc123
+
+    - name: xLanguage
+      in: header
+      required: false
+      description: Preferred language for tier information.
+      schema:
+        type: string
+      example: en
+
+    - name: xMarket
+      in: header
+      required: false
+      description: Market context to localize tier logic or names.
+      schema:
+        type: string
+      example: JP
+
+  responses:
+    '200':
+      $ref: '../components/responses.yaml#/components/responses/responseGetContactTiers'
+    '400':
+      $ref: '../components/responses.yaml#/components/responses/ValidationErrorResponse'
+    '404':
+      $ref: '../components/responses.yaml#/components/responses/NotFoundErrorResponse'
+    '500':
+      $ref: '../components/responses.yaml#/components/responses/ServerErrorResponse'

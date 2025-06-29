@@ -1,0 +1,33 @@
+get:
+  summary: getContactActivities
+  security: []
+  tags:
+    - contact
+  description: Retrieve the activity history associated with the specified contact ID.
+
+  parameters:
+    - name: xContactId
+      in: header
+      required: true
+      description: Unique identifier of the contact whose activity history is being requested.
+      schema:
+        type: string
+      example: abc123
+
+    - name: xLanguage
+      in: header
+      required: false
+      description: Preferred language for localized activity descriptions.
+      schema:
+        type: string
+      example: en
+
+  responses:
+    '200':
+      $ref: '../components/responses.yaml#/components/responses/responseGetContactActivities'
+    '400':
+      $ref: '../components/responses.yaml#/components/responses/ValidationErrorResponse'
+    '404':
+      $ref: '../components/responses.yaml#/components/responses/NotFoundErrorResponse'
+    '500':
+      $ref: '../components/responses.yaml#/components/responses/ServerErrorResponse'

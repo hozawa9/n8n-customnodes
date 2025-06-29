@@ -1,0 +1,41 @@
+put:
+  summary: upgradeContactTiers
+  security: []
+  tags:
+    - tiers
+  description: Upgrade the contact's tier. Optional headers allow specifying the target tier and the reason for the upgrade.
+
+  parameters:
+    - name: xContactId
+      in: header
+      required: true
+      description: Unique identifier of the contact whose tier is to be upgraded.
+      schema:
+        type: string
+      example: abc123
+
+    - name: xReasonForTierChange
+      in: header
+      required: false
+      description: Reason code or explanation for the tier upgrade.
+      schema:
+        type: string
+      example: achieved_threshold
+
+    - name: xTierId
+      in: header
+      required: false
+      description: Tier ID to upgrade the contact to.
+      schema:
+        type: string
+      example: tier_gold
+
+  responses:
+    '200':
+      $ref: '../components/responses.yaml#/components/responses/responseSuccess'
+    '400':
+      $ref: '../components/responses.yaml#/components/responses/ValidationErrorResponse'
+    '404':
+      $ref: '../components/responses.yaml#/components/responses/NotFoundErrorResponse'
+    '500':
+      $ref: '../components/responses.yaml#/components/responses/ServerErrorResponse'
