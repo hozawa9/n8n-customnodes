@@ -10,7 +10,19 @@ properties:
     type: string
   options:
     type: array
-    items: { $ref: "#/definitions/Option" }
+    items:
+      type: object
+      required: [name, value]
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      enum:
+        - { name: Contact, value: contact }
+        - { name: Plans, value: plans }
+        - { name: Actions, value: actions }
+        - { name: Tiers, value: tiers }
 
 definitions:
   Option:
