@@ -12,8 +12,8 @@ paths:
       security: []
       tags:
         - contact
-      operationId: deleteContact
       description: Delete a contact using the xContactId header.
+      operationId: deleteContact
       parameters:
         - name: xContactId
           in: header
@@ -44,8 +44,8 @@ paths:
       security: []
       tags:
         - contact
-      operationId: addContact
       description: Add a new contact. Optional flags for point allocation and tier expiration can be set via query parameters.
+      operationId: addContact
       parameters:
         - name: withPointsAllocations
           in: query
@@ -90,8 +90,8 @@ paths:
       security: []
       tags:
         - contact
-      operationId: getContactLoyaltyInfo
       description: Retrieve loyalty information for the contact specified by the xContactId header.
+      operationId: getContactLoyaltyInfo
       parameters:
         - name: xContactId
           in: header
@@ -122,8 +122,8 @@ paths:
       security: []
       tags:
         - contact
-      operationId: getHashedXContactId
       description: Retrieve the hashed version of the specified xContactId header value.
+      operationId: getHashedXContactId
       parameters:
         - name: xContactId
           in: header
@@ -147,8 +147,8 @@ paths:
       security: []
       tags:
         - contact
-      operationId: getContactActivities
       description: Retrieve the activity history associated with the specified contact ID.
+      operationId: getContactActivities
       parameters:
         - name: xContactId
           in: header
@@ -179,8 +179,8 @@ paths:
       security: []
       tags:
         - plan
-      operationId: changeContactLoyaltyPlan
       description: Update the loyalty point balances for a given contact, including balance, pending, status points and redeemed vouchers.
+      operationId: changeContactLoyaltyPlan
       parameters:
         - name: xContactId
           in: header
@@ -231,8 +231,8 @@ paths:
       security: []
       tags:
         - plan
-      operationId: getProgramSettings
       description: Retrieve the program settings for the specified contact. Optionally accepts currency, language, and market headers to customize the response.
+      operationId: getProgramSettings
       parameters:
         - name: xContactId
           in: header
@@ -277,8 +277,8 @@ paths:
       security: []
       tags:
         - actions
-      operationId: getContactActions
       description: Retrieve available actions for the specified contact. Supports localization using language and currency headers.
+      operationId: getContactActions
       parameters:
         - name: xContactId
           in: header
@@ -316,8 +316,8 @@ paths:
       security: []
       tags:
         - tiers
-      operationId: getContactTiers
       description: Retrieve tier information for the specified contact. Optional headers allow localization by language and market.
+      operationId: getContactTiers
       parameters:
         - name: xContactId
           in: header
@@ -355,8 +355,8 @@ paths:
       security: []
       tags:
         - tiers
-      operationId: downgradeContactTiers
       description: Downgrade the contact's tier. Optional headers may define the target tier, reason for the change, and exit type.
+      operationId: downgradeContactTiers
       parameters:
         - name: xContactId
           in: header
@@ -401,8 +401,8 @@ paths:
       security: []
       tags:
         - tiers
-      operationId: upgradeContactTiers
       description: Upgrade the contact's tier. Optional headers allow specifying the target tier and the reason for the upgrade.
+      operationId: upgradeContactTiers
       parameters:
         - name: xContactId
           in: header

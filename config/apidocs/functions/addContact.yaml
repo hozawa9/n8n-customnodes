@@ -3,8 +3,8 @@ post:
   security: []
   tags:
     - contact
-  operationId: addContact
   description: Add a new contact. Optional flags for point allocation and tier expiration can be set via query parameters.
+  operationId: addContact
 
   parameters:
     - name: withPointsAllocations

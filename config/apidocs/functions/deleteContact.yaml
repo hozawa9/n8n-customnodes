@@ -3,8 +3,8 @@ delete:
   security: []
   tags:
     - contact
-  operationId: deleteContact
   description: Delete a contact using the xContactId header.
+  operationId: deleteContact
 
   parameters:
     - name: xContactId
