@@ -1,22 +1,95 @@
-title: n8n Operations Parameter
+title: n8n Operation Parameter
 type: object
-required: [displayName, name, type, noDataExpression, options]
+required:
+  - displayName
+  - name
+  - type
+  - noDataExpression
+  - displayOptions
+  - options
 properties:
-  displayName:      { const: Options }
-  name:             { const: operation }
-  type:             { const: options }
-  noDataExpression: { const: true }
+  displayName:
+    const: Action
+  name:
+    const: action
+  type:
+    const: options
+  noDataExpression:
+    const: true
+  default:
+    type: string
+    enum:
+      - tiers
+  displayOptions:
+    type: object
+    properties:
+      show:
+        type: object
+        properties:
+          resource:
+            type: array
+            items:
+              type: string
+
   options:
     type: array
-    items: { $ref: "#/definitions/OperationOption" }
+    items:
+      $ref: "#/definitions/OperationOption"
 
 definitions:
   OperationOption:
     type: object
-    required: [name, value]
+    required:
+      - name
+      - value
     properties:
-      name:        { type: string }
-      value:       { type: string }
-      action:      { type: string }
-      description: { type: string }
-      routing:     { type: object }
+      name:
+        type: string
+      value:
+        type: string
+
+  ContactOperations:
+    type: array
+    items:
+      $ref: "#/definitions/OperationOption"
+    default:
+      - name: Delete Contact
+        value: deleteContact
+      - name: Add Contact
+        value: addContact
+      - name: Get Contact Loyalty Info
+        value: getContactLoyaltyInfo
+      - name: Get Contact Loyalty Info by XContactId
+        value: getHashedXContactId
+      - name: Get Contact Activities
+        value: getContactActivities
+
+  PlansOperations:
+    type: array
+    items:
+      $ref: "#/definitions/OperationOption"
+    default:
+      - name: Change Contact Loyalty Plan
+        value: changeContactLoyaltyPlan
+      - name: Get Contact Loyalty Plans
+        value: getProgramSettings
+
+  ActionsOperations:
+    type: array
+    items:
+      $ref: "#/definitions/OperationOption"
+    default:
+      - name: Get Contact Actions
+        value: getContactActions
+
+  TiersOperations:
+    type: array
+    items:
+      $ref: "#/definitions/OperationOption"
+    default:
+      - name: Get Contact Tiers
+        value: getContactTiers
+      - name: Downgrade Contact Tier
+        value: downgradeContactTiers
+      - name: Upgrade Contact Tier
+        value: upgradeContactTiers
