@@ -1,5 +1,5 @@
 put:
-  summary: upgradeContactTiers
+  summary: Upgrade Contact Tiers
   security: []
   tags:
     - tiers

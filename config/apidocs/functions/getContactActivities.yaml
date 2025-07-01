@@ -1,5 +1,5 @@
 get:
-  summary: getContactActivities
+  summary: Get Contact Activities
   security: []
   tags:
     - contact

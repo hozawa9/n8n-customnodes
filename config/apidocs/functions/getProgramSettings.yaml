@@ -1,5 +1,5 @@
 get:
-  summary: getProgramSettings
+  summary: Get Program Settings
   security: []
   tags:
     - plan
