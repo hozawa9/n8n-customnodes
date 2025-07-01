@@ -3,6 +3,7 @@ get:
   security: []
   tags:
     - tiers
+  operationId: getContactTiers
   description: Retrieve tier information for the specified contact. Optional headers allow localization by language and market.
 
   parameters:

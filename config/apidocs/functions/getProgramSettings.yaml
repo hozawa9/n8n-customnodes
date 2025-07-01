@@ -3,6 +3,7 @@ get:
   security: []
   tags:
     - plan
+  operationId: getProgramSettings
   description: Retrieve the program settings for the specified contact. Optionally accepts currency, language, and market headers to customize the response.
 
   parameters:

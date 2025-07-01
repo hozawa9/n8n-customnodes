@@ -3,6 +3,7 @@ put:
   security: []
   tags:
     - tiers
+  operationId: downgradeContactTiers
   description: Downgrade the contact's tier. Optional headers may define the target tier, reason for the change, and exit type.
 
   parameters:

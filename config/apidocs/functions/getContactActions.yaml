@@ -3,6 +3,7 @@ get:
   security: []
   tags:
     - actions
+  operationId: getContactActions
   description: Retrieve available actions for the specified contact. Supports localization using language and currency headers.
 
   parameters:

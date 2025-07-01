@@ -3,6 +3,7 @@ get:
   security: []
   tags:
     - contact
+  operationId: getContactActivities
   description: Retrieve the activity history associated with the specified contact ID.
 
   parameters:

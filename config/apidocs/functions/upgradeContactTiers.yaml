@@ -3,6 +3,7 @@ put:
   security: []
   tags:
     - tiers
+  operationId: upgradeContactTiers
   description: Upgrade the contact's tier. Optional headers allow specifying the target tier and the reason for the upgrade.
 
   parameters:

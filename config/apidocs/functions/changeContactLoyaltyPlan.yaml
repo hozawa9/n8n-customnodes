@@ -3,6 +3,7 @@ put:
   security: []
   tags:
     - plan
+  operationId: changeContactLoyaltyPlan
   description: Update the loyalty point balances for a given contact, including balance, pending, status points and redeemed vouchers.
 
   parameters:

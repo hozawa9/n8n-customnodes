@@ -3,6 +3,7 @@ get:
   security: []
   tags:
     - contact
+  operationId: getHashedXContactId
   description: Retrieve the hashed version of the specified xContactId header value.
 
   parameters:
