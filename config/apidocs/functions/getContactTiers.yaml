@@ -4,6 +4,7 @@ get:
   tags:
     - tiers
   description: Retrieve tier information for the specified contact. Optional headers allow localization by language and market.
+  operationId: getContactTiers
 
   parameters:
     - name: xContactId

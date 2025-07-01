@@ -4,6 +4,7 @@ get:
   tags:
     - contact
   description: Retrieve loyalty information for the contact specified by the xContactId header.
+  operationId: getContactLoyaltyInfo
 
   parameters:
     - name: xContactId

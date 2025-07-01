@@ -4,6 +4,7 @@ get:
   tags:
     - contact
   description: Retrieve the activity history associated with the specified contact ID.
+  operationId: getContactActivities
 
   parameters:
     - name: xContactId

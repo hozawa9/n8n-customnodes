@@ -5,55 +5,36 @@ info:
 
 servers:
   - url: https://contact-api.loyalsys.io/api/v4
-
+tags: []
 
 paths:
   # Resource - Contact
-  # Delete Contact
   /contact/:
     $ref: 'functions/deleteContact.yaml'
-
-  # Add Contact
   /contact/join:
     $ref: 'functions/addContact.yaml'
-
-  # Get Contact Loyalty Info
   /contact/contact:
     $ref: 'functions/getContactLoyaltyInfo.yaml'
-
-  # Get Contact Loyalty Info by XContactId
   /contact/hash:
     $ref: 'functions/getHashedXContactId.yaml'
-
-  # Get Contact Activities
   /contact/activities:
     $ref: 'functions/getContactActivities.yaml'
 
-
   # Resource - Plans
-  # Change Contact Loyalty Plan
   /contact/changeplans:
     $ref: 'functions/changeContactLoyaltyPlan.yaml'
-
-  # Get Contact Loyalty Plans
   /contact/programSettings:
     $ref: 'functions/getProgramSettings.yaml'
 
   # Resource - Actions
-  # Get Contact Actions
   /contact/actions:
     $ref: 'functions/getContactActions.yaml'
 
   # Resource - Tiers
-  # Get Contact Tiers
   /contact/tiers:
     $ref: 'functions/getContactTiers.yaml'
-
-  # Downgrade Contact Tier
   /contact/tiers/downgrade:
     $ref: 'functions/downgradeContactTiers.yaml'
-
-  # Upgrade Contact Tier
   /contact/tiers/upgrade:
     $ref: 'functions/upgradeContactTiers.yaml'
 
@@ -88,7 +69,44 @@ components:
               value:
                 type: string
           enum:
-          - { name: Contact, value: contact }
-          - { name: Plans, value: plans }
-          - { name: Actions, value: actions }
-          - { name: Tiers, value: tiers }
+            - { name: Contact, value: contact }
+            - { name: Plans, value: plans }
+            - { name: Actions, value: actions }
+            - { name: Tiers, value: tiers }
+
+    operations:
+      type: object
+      required:
+        - displayName
+        - name
+        - type
+        - noDataExpression
+        - displayOptions
+        - options
+      properties:
+        displayName:
+          const: Action
+        name:
+          const: action
+        type:
+          const: options
+        noDataExpression:
+          const: true
+        default:
+          type: string
+          enum:
+            - tiers
+        displayOptions:
+          type: object
+          properties:
+            show:
+              type: object
+              properties:
+                resource:
+                  type: array
+                  items:
+                    type: string
+        options:
+          type: array
+          items:
+            $ref: "../apidocs/components/operations.yaml#/definitions/OperationOption"

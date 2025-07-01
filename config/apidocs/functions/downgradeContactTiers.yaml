@@ -4,6 +4,7 @@ put:
   tags:
     - tiers
   description: Downgrade the contact's tier. Optional headers may define the target tier, reason for the change, and exit type.
+  operationId: downgradeContactTiers
 
   parameters:
     - name: xContactId

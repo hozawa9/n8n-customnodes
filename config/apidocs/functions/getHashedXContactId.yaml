@@ -4,6 +4,7 @@ get:
   tags:
     - contact
   description: Retrieve the hashed version of the specified xContactId header value.
+  operationId: getHashedXContactId
 
   parameters:
     - name: xContactId

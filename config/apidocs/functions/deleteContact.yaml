@@ -4,6 +4,7 @@ delete:
   tags:
     - contact
   description: Delete a contact using the xContactId header.
+  operationId: deleteContact
 
   parameters:
     - name: xContactId

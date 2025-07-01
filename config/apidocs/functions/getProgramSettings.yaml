@@ -4,6 +4,7 @@ get:
   tags:
     - plan
   description: Retrieve the program settings for the specified contact. Optionally accepts currency, language, and market headers to customize the response.
+  operationId: getProgramSettings
 
   parameters:
     - name: xContactId

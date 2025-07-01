@@ -4,6 +4,7 @@ put:
   tags:
     - tiers
   description: Upgrade the contact's tier. Optional headers allow specifying the target tier and the reason for the upgrade.
+  operationId: upgradeContactTiers
 
   parameters:
     - name: xContactId
