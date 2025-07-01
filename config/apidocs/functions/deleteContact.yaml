@@ -1,5 +1,5 @@
 delete:
-  summary: deleteContact
+  summary: Delete Contact
   security: []
   tags:
     - contact

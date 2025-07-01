@@ -1,5 +1,5 @@
 get:
-  summary: getHashedXContactId
+  summary: Get Hashed XContactId
   security: []
   tags:
     - contact

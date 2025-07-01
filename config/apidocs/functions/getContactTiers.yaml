@@ -1,5 +1,5 @@
 get:
-  summary: getContactTiers
+  summary: Get Contact Tiers
   security: []
   tags:
     - tiers

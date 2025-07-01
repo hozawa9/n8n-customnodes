@@ -1,5 +1,5 @@
 get:
-  summary: getContactLoyaltyInfo
+  summary: Get Contact Loyalty Info
   security: []
   tags:
     - contact

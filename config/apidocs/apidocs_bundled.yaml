@@ -8,7 +8,7 @@ tags: []
 paths:
   /contact/:
     delete:
-      summary: deleteContact
+      summary: Delete Contact
       security: []
       tags:
         - contact
@@ -40,7 +40,7 @@ paths:
           $ref: '#/components/responses/ServerErrorResponse'
   /contact/join:
     post:
-      summary: addContact
+      summary: Add Contact
       security: []
       tags:
         - contact
@@ -86,7 +86,7 @@ paths:
           $ref: '#/components/responses/ServerErrorResponse'
   /contact/contact:
     get:
-      summary: getContactLoyaltyInfo
+      summary: Get Contact Loyalty Info
       security: []
       tags:
         - contact
@@ -118,7 +118,7 @@ paths:
           $ref: '#/components/responses/ServerErrorResponse'
   /contact/hash:
     get:
-      summary: getHashedXContactId
+      summary: Get Hashed XContactId
       security: []
       tags:
         - contact
@@ -143,7 +143,7 @@ paths:
           $ref: '#/components/responses/ServerErrorResponse'
   /contact/activities:
     get:
-      summary: getContactActivities
+      summary: Get Contact Activities
       security: []
       tags:
         - contact
@@ -175,7 +175,7 @@ paths:
           $ref: '#/components/responses/ServerErrorResponse'
   /contact/changeplans:
     put:
-      summary: changeContactLoyaltyPlan
+      summary: Change Contact Loyalty Plan
       security: []
       tags:
         - plan
@@ -227,7 +227,7 @@ paths:
           $ref: '#/components/responses/ServerErrorResponse'
   /contact/programSettings:
     get:
-      summary: getProgramSettings
+      summary: Get Program Settings
       security: []
       tags:
         - plan
@@ -273,7 +273,7 @@ paths:
           $ref: '#/components/responses/ServerErrorResponse'
   /contact/actions:
     get:
-      summary: getContactActions
+      summary: Get Contact Actions
       security: []
       tags:
         - actions
@@ -312,7 +312,7 @@ paths:
           $ref: '#/components/responses/ServerErrorResponse'
   /contact/tiers:
     get:
-      summary: getContactTiers
+      summary: Get Contact Tiers
       security: []
       tags:
         - tiers
@@ -351,7 +351,7 @@ paths:
           $ref: '#/components/responses/ServerErrorResponse'
   /contact/tiers/downgrade:
     put:
-      summary: downgradeContactTiers
+      summary: Downgrade Contact Tiers
       security: []
       tags:
         - tiers
@@ -397,7 +397,7 @@ paths:
           $ref: '#/components/responses/ServerErrorResponse'
   /contact/tiers/upgrade:
     put:
-      summary: upgradeContactTiers
+      summary: Upgrade Contact Tiers
       security: []
       tags:
         - tiers
