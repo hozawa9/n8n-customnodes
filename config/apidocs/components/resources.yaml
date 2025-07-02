@@ -1,67 +1,24 @@
-title: n8n Resource Parameter
-type: object
-required: [displayName, name, type, noDataExpression]
-properties:
-  displayName:      { const: Resource }
-  name:             { const: resource }
-  type:             { const: options }
-  noDataExpression: { const: true }
-  default: contact
-  options:
-    type: array
-    items:
-      $ref: "#/definitions/ResourceOption"
+ResourceOption:
+  type: object
+  required:
+    - name
+    - value
+  properties:
+    name:
+      type: string
+    value:
+      type: string
 
-definitions:
-  ResourceOption:
-    type: object
-    required: [name, value, operations]
-    properties:
-      name: { type: string }
-      value: { type: string }
-      operations:
-        $ref: './operations.yaml#/definitions/Operations'
-
-  Operations:
-    type: array
-    items:
-      $ref: "#/definitions/OperationOption"
-
-  OperationOption:
-    type: object
-    required: [name, value]
-    properties:
-      name: { type: string }
-      value: { type: string }
-
-  # Resource-specific options
-  ContactOperations:
-    type: array
-    items:
-      enum:
-        - { name: Delete Contact, value: deleteContact }
-        - { name: Add Contact, value: addContact }
-        - { name: Get Contact Loyalty Info, value: getContactLoyaltyInfo }
-        - { name: Get Contact Loyalty Info by XContactId, value: getHashedXContactId }
-        - { name: Get Contact Activities, value: getContactActivities }
-
-  PlansOperations:
-    type: array
-    items:
-      enum:
-        - { name: Change Contact Loyalty Plan, value: changeContactLoyaltyPlan }
-        - { name: Get Contact Loyalty Plans, value: getProgramSettings }
-
-  ActionsOperations:
-    type: array
-    items:
-      enum:
-        - { name: Get Contact Actions, value: getContactActions }
-
-  TiersOperations:
-    type: array
-    items:
-      enum:
-        - { name: Get Contact Tiers, value: getContactTiers }
-        - { name: Downgrade Contact Tier, value: downgradeContactTiers }
-        - { name: Upgrade Contact Tier, value: upgradeContactTiers }
+ResourceOptionList:
+  type: array
+  items:
+    $ref: '#/ResourceOption'
+  default:
+    - name: Contact
+      value: contact
+    - name: Plan
+      value: plan
+    - name: Actions
+      value: action
+    - name: Tiers
+      value: tiers

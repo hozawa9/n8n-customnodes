@@ -59,20 +59,7 @@ components:
         default:
           type: string
         options:
-          type: array
-          items:
-            type: object
-            required: [name, value]
-            properties:
-              name:
-                type: string
-              value:
-                type: string
-          enum:
-            - { name: Contact, value: contact }
-            - { name: Plan, value: plan }
-            - { name: Actions, value: actions }
-            - { name: Tiers, value: tiers }
+          $ref: './components/resources.yaml#/ResourceOptionList'
 
     operations:
       type: object
@@ -85,13 +72,17 @@ components:
         - options
       properties:
         displayName:
-          const: Action
+          type: string
+          enum: [Action]
         name:
-          const: action
+          type: string
+          enum: [action]
         type:
-          const: options
+          type: string
+          enum: [options]
         noDataExpression:
-          const: true
+          type: boolean
+          enum: [true]
         default:
           type: string
           enum:
@@ -109,4 +100,12 @@ components:
         options:
           type: array
           items:
-            $ref: "../apidocs/components/operations.yaml#/definitions/OperationOption"
+            type: object
+            required:
+              - name
+              - value
+            properties:
+              name:
+                type: string
+              value:
+                type: string
