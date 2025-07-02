@@ -70,7 +70,7 @@ components:
                 type: string
           enum:
             - { name: Contact, value: contact }
-            - { name: Plans, value: plans }
+            - { name: Plan, value: plan }
             - { name: Actions, value: actions }
             - { name: Tiers, value: tiers }
 
