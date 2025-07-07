@@ -14,7 +14,7 @@ const typedProperties = require('./properties_test01.json') as INodeProperties[]
 
 export class EmarsysLoyalty implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Emarsys Loyalty v2.1',
+		displayName: 'Emarsys Loyalty v2.2',
 		name: 'emarsysLoyalty',
 		icon: 'file:emarsys.svg',
 		group: ['transform'],
@@ -55,7 +55,7 @@ export class EmarsysLoyalty implements INodeType {
 					};
 				} = {
 					contact: {
-						deleteContact: { method: 'DELETE', path: '/api/v4/contact/' },
+						deleteContact: { method: 'DELETE', path: '/api/v4/contact' },
 						addContact: { method: 'POST', path: '/api/v4/contact/join' },
 						getContactLoyaltyInfo: { method: 'GET', path: '/api/v4/contact' },
 						getHashedXcontactid: { method: 'GET', path: '/api/v4/contact/hash' },
