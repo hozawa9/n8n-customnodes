@@ -5,6 +5,7 @@ import type {
 	INodeTypeDescription,
 	NodeConnectionType,
 	INodeProperties,
+	IDataObject,
 } from 'n8n-workflow';
 
 const { NodeOperationError } = require('n8n-workflow');
@@ -13,7 +14,7 @@ const typedProperties = require('./properties_test01.json') as INodeProperties[]
 
 export class EmarsysLoyalty implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Emarsys Loyalty',
+		displayName: 'Emarsys Loyalty v1.1',
 		name: 'emarsysLoyalty',
 		icon: 'file:emarsys.svg',
 		group: ['transform'],
@@ -122,8 +123,36 @@ export class EmarsysLoyalty implements INodeType {
 					options.body = body;
 				}
 
-				const response = await this.helpers.request(options);
-				returnData.push({ json: response });
+				const response = await this.helpers.request({
+					...options,
+					resolveWithFullResponse: true,
+				});
+
+				const contentType = response.headers['content-type'];
+				const responseBody = response.body;
+
+				if (contentType?.includes('application/json')) {
+					let data: unknown;
+					try {
+						data = typeof responseBody === 'object' ? responseBody : JSON.parse(responseBody);
+					} catch {
+						data = { body: responseBody };
+					}
+
+					if (Array.isArray(data)) {
+						for (const item of data) {
+							returnData.push({ json: item });
+						}
+					} else if (typeof data === 'object' && data !== null) {
+						returnData.push({ json: data as IDataObject });
+					} else {
+						returnData.push({ json: { body: String(data) } });
+					}
+				} else {
+					// treat as plain text or other format
+					returnData.push({ json: { body: responseBody } });
+				}
+
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({ json: { error: (error as Error).message } });
