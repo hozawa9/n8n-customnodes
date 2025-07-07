@@ -4,9 +4,12 @@ import type {
 	INodeType,
 	INodeTypeDescription,
 	NodeConnectionType,
+	INodeProperties,
 } from 'n8n-workflow';
 
-import { NodeOperationError } from 'n8n-workflow';
+const { NodeOperationError } = require('n8n-workflow');
+
+const typedProperties = require('./properties_test01.json') as INodeProperties[];
 
 export class EmarsysLoyalty implements INodeType {
 	description: INodeTypeDescription = {
@@ -28,187 +31,108 @@ export class EmarsysLoyalty implements INodeType {
 				required: true,
 			},
 		],
-		properties: [
-			{
-				displayName: 'Resource',
-				name: 'resource',
-				type: 'options',
-				options: [
-					{ name: 'Contact', value: 'contact' },
-					{ name: 'Actions', value: 'actions' },
-					{ name: 'Tiers', value: 'tiers' },
-					{ name: 'Referral', value: 'referral' },
-				],
-				default: 'contact',
-			},
-			{
-				displayName: 'Action',
-				name: 'action',
-				type: 'options',
-				displayOptions: { show: { resource: ['contact'] } },
-				options: [
-					{ name: "Get Contact Info", value: 'contact' },
-					{ name: "Get Contact Activities", value: 'activities' },
-					{ name: "Hash Contact Id", value: 'hash'},
-				],
-				default: 'contact',
-			},
-			{
-				displayName: 'Action',
-				name: 'action',
-				type: 'options',
-				displayOptions: { show: { resource: ['actions'] } },
-				options: [
-					{ name: "Get Contact Actions", value: 'actions' },
-				],
-				default: 'actions',
-			},
-			{
-				displayName: 'Action',
-				name: 'action',
-				type: 'options',
-				displayOptions: { show: { resource: ['tiers'] } },
-				options: [
-					{ name: "Get Contact Tiers", value: 'tiers' },
-				],
-				default: 'tiers',
-			},
-			{
-				displayName: 'Action',
-				name: 'action',
-				type: 'options',
-				displayOptions: { show: { resource: ['referral'] } },
-				options: [
-					{ name: "Get Referral Content", value: 'referralFriendContent' },
-					{ name: "Get Referrals", value: 'referrals' },
-				],
-				default: 'referralFriendContent',
-			},
-			{
-				displayName: 'Contact External ID',
-				name: 'xContactId',
-				type: 'string',
-				default: '',
-				required: true,
-				displayOptions: {
-					show: {
-						action: [
-							'contact', 'activities', 'hash', 'actions', 'tiers', 'referralFriendContent', 'referrals'
-						]
-					},
-				},
-				description: 'External ID of the contact (required)',
-			},
-			{
-				displayName: 'Language (ISO Code)',
-				name: 'xLanguage',
-				type: 'string',
-				default: '',
-				displayOptions: {
-					show: {
-						action: [
-							'contact', 'activities', 'actions', 'tiers', 'referralFriendContent', 'referrals'
-						]
-					},
-				},
-				description: 'Optional. Example: en, es, zh-CN etc.',
-			},
-			{
-				displayName: 'Currency Code',
-				name: 'xCurrency',
-				type: 'string',
-				default: '',
-				displayOptions: {
-					show: {
-						action: ['actions']
-					},
-				},
-				description: 'Optional. Example: USD, EUR',
-			},
-			{
-				displayName: 'Market Code',
-				name: 'xMarket',
-				type: 'string',
-				default: '',
-				displayOptions: {
-					show: {
-						action: ['tiers', 'referralFriendContent', 'referrals']
-					},
-				},
-				description: 'Optional market identifier code.',
-			},
-			{
-				displayName: 'Referral ID',
-				name: 'xReferralId',
-				type: 'string',
-				default: '',
-				required: true,
-				displayOptions: {
-					show: {
-						action: ['referralFriendContent']
-					},
-				},
-				description: 'The referralId which is returned when getting a contact\'s referrals.',
-			},
-		],
+		properties: typedProperties as INodeProperties[],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
-		const action = this.getNodeParameter('action', 0) as string;
-
-		const endpointMap: { [key: string]: string } = {
-			contact: '/api/v4/contact',
-			activities: '/api/v4/contact/activities',
-			actions: '/api/v4/contact/actions',
-			tiers: '/api/v4/contact/tiers',
-			referralFriendContent: '/api/v4/contact/referralFriendContent',
-			referrals: '/api/v4/contact/referrals',
-			hash: '/api/v4/contact/hash',
-		};
 
 		const baseUrl = 'https://contact-api.loyalsys.io';
 
 		for (let i = 0; i < items.length; i++) {
 			try {
+				const resource = this.getNodeParameter('resource', i) as string;
+				const action = this.getNodeParameter('action', i) as string;
+
+				const endpointMap: {
+					[key: string]: {
+						[key: string]: {
+							method: string;
+							path: string;
+						};
+					};
+				} = {
+					contact: {
+						deleteContact: { method: 'DELETE', path: '/api/v4/contact/' },
+						addContact: { method: 'POST', path: '/api/v4/contact/join' },
+						getContactLoyaltyInfo: { method: 'GET', path: '/api/v4/contact/contact' },
+						getHashedXcontactid: { method: 'GET', path: '/api/v4/contact/hash' },
+						getContactActivities: { method: 'GET', path: '/api/v4/contact/activities' },
+					},
+					plan: {
+						changeContactLoyaltyPlan: { method: 'POST', path: '/api/v4/contact/changeplans' },
+						getProgramSettings: { method: 'GET', path: '/api/v4/contact/programSettings' },
+					},
+					actions: {
+						getContactActions: { method: 'GET', path: '/api/v4/contact/actions' },
+					},
+					tiers: {
+						getContactTiers: { method: 'GET', path: '/api/v4/contact/tiers' },
+						downgradeContactTiers: { method: 'POST', path: '/api/v4/contact/tiers/downgrade' },
+						upgradeContactTiers: { method: 'POST', path: '/api/v4/contact/tiers/upgrade' },
+					},
+				};
+
+				const { method, path } = endpointMap[resource][action];
 				const credentials = await this.getCredentials('emarsysLoyaltyApi');
-				const url = `${baseUrl}${endpointMap[action]}`;
+				const url = `${baseUrl}${path}`;
+
 				const headers: { [key: string]: string } = {
 					[credentials.name as string]: credentials.value as string,
 					'Content-Type': 'application/json',
 				};
 
-				headers['x-contact-id'] = this.getNodeParameter('xContactId', i) as string;
-				const xLanguage = this.getNodeParameter('xLanguage', i, '') as string;
-				if (xLanguage) headers['x-language'] = xLanguage;
-				const xCurrency = this.getNodeParameter('xCurrency', i, '') as string;
-				if (xCurrency) headers['x-currency'] = xCurrency;
-				const xMarket = this.getNodeParameter('xMarket', i, '') as string;
-				if (xMarket) headers['x-market'] = xMarket;
-				const xReferralId = this.getNodeParameter('xReferralId', i, '') as string;
-				if (xReferralId) headers['x-referral-id'] = xReferralId;
+				const optionalHeaders = [
+					'xContactId',
+					'xLanguage',
+					'xCurrency',
+					'xMarket',
+					'xInitiatedBy',
+					'xPlanId',
+					'xExitTo',
+					'xReasonForTierChange',
+					'xTierId',
+				];
 
-				const response = await this.helpers.request({
-					method: 'GET',
+				for (const param of optionalHeaders) {
+					const value = this.getNodeParameter(param, i, '') as string;
+					if (value) {
+						headers[param.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)] = value;
+					}
+				}
+
+				const bodyParams = ['withPointsAllocations', 'withTierExpiration'];
+				const body: Record<string, any> = {};
+				for (const param of bodyParams) {
+					const value = this.getNodeParameter(param, i, '') as string;
+					if (value) {
+						body[param] = value;
+					}
+				}
+
+				const options: Record<string, any> = {
+					method,
 					url,
 					headers,
 					json: true,
-				});
+				};
 
-				if (action === 'hash') {
-					returnData.push({ json: { result: typeof response === 'string' ? JSON.parse(response) : response } });
-				} else {
-					returnData.push({ json: response });
+				if (method === 'POST' || method === 'PUT') {
+					options.body = body;
 				}
+
+				const response = await this.helpers.request(options);
+				returnData.push({ json: response });
 			} catch (error) {
 				if (this.continueOnFail()) {
-					returnData.push({ json: { error: error.message } });
+					returnData.push({ json: { error: (error as Error).message } });
 					continue;
 				}
 				throw new NodeOperationError(this.getNode(), error);
 			}
 		}
+
 		return [returnData];
 	}
 }

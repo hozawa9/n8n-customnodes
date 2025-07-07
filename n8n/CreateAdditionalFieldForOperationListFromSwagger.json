@@ -1,0 +1,481 @@
+{
+  "name": "CreateAdditionalFieldForOperationListFromSwagger",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6f360900-1df4-421a-9471-cc07c7f032d5",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "hozawa9",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-customnodes",
+          "mode": "name"
+        },
+        "filePath": "config/apidocs/apidocs_bundled.yaml",
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "5288ffe1-4814-426b-b104-bfc8871f6a32",
+      "name": "GitHub1",
+      "webhookId": "a5479199-53a9-4b9b-8019-b737ca714a29",
+      "credentials": {
+        "githubApi": {
+          "id": "RbCzemoIyvcoSSKk",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "45deab53-1bd0-4fc5-95d2-f1481a0f3fb0",
+      "name": "Extract from File",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "value": "={{ $json.data }}"
+      },
+      "type": "n8n-nodes-yaml.yaml",
+      "typeVersion": 1,
+      "position": [
+        640,
+        0
+      ],
+      "id": "632014b8-0bb7-4fdd-a933-fe16af91e68a",
+      "name": "YAML"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "paths",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        0
+      ],
+      "id": "e7806157-7227-4fc0-a52b-24b91731b252",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "9d9f3eb0-fc6a-4e94-80b1-64cbf6a1371b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 357659298,
+          "mode": "list",
+          "cachedResultName": "additional_fields_for_operation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU/edit#gid=357659298"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "operation": "={{ $('If').item.json.operation }}",
+            "additional_field": "={{ $json.name }}",
+            "required": "={{ $json.required }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "operation",
+              "displayName": "operation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "additional_field",
+              "displayName": "additional_field",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "required",
+              "displayName": "required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2380,
+        200
+      ],
+      "id": "8da6beed-dbbe-435d-adb9-8197177c8ad8",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ds1v10UttuaxmUzV",
+          "name": "Google Sheets account ozawa"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "additionalFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2180,
+        100
+      ],
+      "id": "576eb51d-254b-4982-b09d-4792cab85c7a",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "master",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "path",
+              "lookupValue": "={{ $json[\"0\"] }}"
+            },
+            {
+              "lookupColumn": "method",
+              "lookupValue": "={{ $json[\"1\"].keys()[0] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1480,
+        100
+      ],
+      "id": "bd209029-6b7d-45ac-b936-19a2c680dca5",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SaqHyM8qYEgZZYqe",
+          "name": "Google Sheets Narita"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba616036-e19f-4fc9-b240-de7cfe47043a",
+              "name": "paths",
+              "value": "={{ Object.entries($json.data.paths) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        840,
+        0
+      ],
+      "id": "2545fa94-8393-4a6a-b8d2-71d40cc67ea7",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3f686288-07aa-4638-b432-3eaff69e8f8b",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1660,
+        100
+      ],
+      "id": "3808e2e6-0b99-4b5f-a77d-1a91846f3a09",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "errorMessage": "more than one path is found!"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1860,
+        220
+      ],
+      "id": "9c502743-84fe-4911-9c40-ed67d77fc16d",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3c42e271-3836-4248-83ac-b1553cb56b2e",
+              "name": "additionalFields",
+              "value": "={{ $('Loop Over Items').item.json[1][$('If').item.json.method].parameters.map(item => Object.fromEntries([[\"name\", item.name],[\"required\",item.required]])) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2000,
+        100
+      ],
+      "id": "cd2d7951-b6be-4e6f-a2b8-518f8db9a92b",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GitHub1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "YAML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "GitHub1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YAML": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f5488bab-8074-4f2e-a457-f4d7e1169642",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fee89367709ee1b173e38faa4700676e54385d2528c4d1894433ce13df893cc2"
+  },
+  "id": "MYDS8i7VePBONwDR",
+  "tags": []
+}
