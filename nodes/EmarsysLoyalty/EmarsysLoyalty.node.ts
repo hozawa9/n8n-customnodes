@@ -10,11 +10,36 @@ import type {
 
 const { NodeOperationError } = require('n8n-workflow');
 
-const typedProperties = require('./properties_test01.json') as INodeProperties[];
+const typedProperties = require('./properties_test02.json') as INodeProperties[];
+const paramJson = require('./param.json') as Array<{
+	operation: string;
+	additional_field: string;
+	in: 'headers' | 'body';
+}>;
+const endpointJson = require('./endpoint.json') as Array<{
+	operation: string;
+	resource: string;
+	method: string;
+	path: string;
+}>;
+
+const paramMap: Record<string, { headers: string[]; body: string[] }> = {};
+
+for (const { operation, additional_field, in: location } of paramJson) {
+	if (!paramMap[operation]) {
+		paramMap[operation] = { headers: [], body: [] };
+	}
+	paramMap[operation][location].push(additional_field);
+}
+
+const endpointMap: Record<string, { method: string; path: string }> = {};
+for (const { operation, method, path } of endpointJson) {
+	endpointMap[operation] = { method: method.toUpperCase(), path: `/api/v4${path}` };
+}
 
 export class EmarsysLoyalty implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Emarsys Loyalty v2.3',
+		displayName: 'Emarsys Loyalty v2.4',
 		name: 'emarsysLoyalty',
 		icon: 'file:emarsys.svg',
 		group: ['transform'],
@@ -32,83 +57,55 @@ export class EmarsysLoyalty implements INodeType {
 				required: true,
 			},
 		],
-		properties: typedProperties as INodeProperties[],
+		properties: typedProperties,
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
-
 		const baseUrl = 'https://contact-api.loyalsys.io';
 
 		for (let i = 0; i < items.length; i++) {
 			try {
-				const resource = this.getNodeParameter('resource', i) as string;
 				const action = this.getNodeParameter('action', i) as string;
 
-				const endpointMap: {
-					[key: string]: {
-						[key: string]: {
-							method: string;
-							path: string;
-						};
-					};
-				} = {
-					contact: {
-						deleteContact: { method: 'DELETE', path: '/api/v4/contact' },
-						addContact: { method: 'POST', path: '/api/v4/contact/join' },
-						getContactLoyaltyInfo: { method: 'GET', path: '/api/v4/contact' },
-						getHashedXcontactid: { method: 'GET', path: '/api/v4/contact/hash' },
-						getContactActivities: { method: 'GET', path: '/api/v4/contact/activities' },
-					},
-					plan: {
-						changeContactLoyaltyPlan: { method: 'PUT', path: '/api/v4/contact/changeplan' },
-						getProgramSettings: { method: 'GET', path: '/api/v4/contact/programSettings' },
-					},
-					actions: {
-						getContactActions: { method: 'GET', path: '/api/v4/contact/actions' },
-					},
-					tiers: {
-						getContactTiers: { method: 'GET', path: '/api/v4/contact/tiers' },
-						downgradeContactTiers: { method: 'PUT', path: '/api/v4/contact/tiers/downgrade' },
-						upgradeContactTiers: { method: 'PUT', path: '/api/v4/contact/tiers/upgrade' },
-					},
-				};
-
-				const { method, path } = endpointMap[resource][action];
+				const { method, path } = endpointMap[action];
 				const credentials = await this.getCredentials('emarsysLoyaltyApi');
 				const url = `${baseUrl}${path}`;
 
-				const headers: { [key: string]: string } = {
+				const headers: Record<string, string> = {
 					[credentials.name as string]: credentials.value as string,
 					'Content-Type': 'application/json',
 				};
 
-				const optionalHeaders = [
-					'xContactId',
-					'xLanguage',
-					'xCurrency',
-					'xMarket',
-					'xInitiatedBy',
-					'xPlanId',
-					'xExitTo',
-					'xReasonForTierChange',
-					'xTierId',
-				];
+				const body: IDataObject = {};
 
-				for (const param of optionalHeaders) {
-					const value = this.getNodeParameter(param, i, '') as string;
-					if (value) {
-						headers[param.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)] = value;
+				const headerParams = paramMap[action]?.headers ?? [];
+				const bodyParams = paramMap[action]?.body ?? [];
+
+				for (const name of headerParams) {
+					let val: any = null;
+					try {
+						val = this.getNodeParameter(name, i);
+					} catch {}
+
+					const displayName = typedProperties.find(p => p.name === name)?.displayName ?? name;
+					if (val !== undefined && val !== '') {
+						headers[displayName] = String(val);
 					}
 				}
 
-				const bodyParams = ['withPointsAllocations', 'withTierExpiration'];
-				const body: Record<string, any> = {};
-				for (const param of bodyParams) {
-					const value = this.getNodeParameter(param, i, '') as string;
-					if (value) {
-						body[param] = value;
+				for (const name of bodyParams) {
+					let val: any = null;
+					let type: string | undefined;
+					try {
+						const paramDef = typedProperties.find(p => p.name === name);
+						type = paramDef?.type;
+						val = this.getNodeParameter(name, i, type === 'boolean' ? false : undefined);
+					} catch {}
+
+					if (type === 'boolean' || (val !== undefined && val !== '')) {
+						body[name] = type === 'boolean' ? Boolean(val) : val;
 					}
 				}
 
@@ -118,19 +115,11 @@ export class EmarsysLoyalty implements INodeType {
 					headers,
 					json: true,
 				};
+				if (Object.keys(body).length) options.body = body;
 
-				if (method === 'POST' || method === 'PUT') {
-					options.body = body;
-				}
-
-				const response = await this.helpers.request({
-					...options,
-					resolveWithFullResponse: true,
-				});
-
+				const response = await this.helpers.request({ ...options, resolveWithFullResponse: true });
 				const contentType = response.headers['content-type'];
 				const responseBody = response.body;
-
 				if (contentType?.includes('application/json')) {
 					let data: unknown;
 					try {
@@ -140,19 +129,15 @@ export class EmarsysLoyalty implements INodeType {
 					}
 
 					if (Array.isArray(data)) {
-						for (const item of data) {
-							returnData.push({ json: item });
-						}
+						for (const item of data) returnData.push({ json: item });
 					} else if (typeof data === 'object' && data !== null) {
 						returnData.push({ json: data as IDataObject });
 					} else {
 						returnData.push({ json: { body: String(data) } });
 					}
 				} else {
-					// treat as plain text or other format
 					returnData.push({ json: { body: responseBody } });
 				}
-
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({ json: { error: (error as Error).message } });
@@ -161,7 +146,6 @@ export class EmarsysLoyalty implements INodeType {
 				throw new NodeOperationError(this.getNode(), error);
 			}
 		}
-
 		return [returnData];
 	}
 }
