@@ -6,8 +6,20 @@ import type {
 	NodeConnectionType,
 	INodeProperties,
 	IDataObject,
+	Icon
 } from 'n8n-workflow';
 const { NodeOperationError } = require('n8n-workflow');
+
+const description = require('./description.json') as {
+	displayName: string;
+	name: string;
+	icon: Icon | undefined;
+	group: string[];
+	version: number;
+	defaults: object;
+	credentials: Array<{ name: string; required: boolean }>;
+	requestDefaults?: { baseURL: string };
+};
 
 const typedProperties = require('./properties_test03.json') as INodeProperties[];
 const endpointJson = require('./endpoint.json') as Array<{
@@ -33,10 +45,7 @@ const endpointJson = require('./endpoint.json') as Array<{
 	body_4_required: boolean;
 }>;
 
-const paramMap: Record<
-	string,
-	{ headers: Array<{ name: string; required: boolean }>; body: Array<{ name: string; required: boolean }> }
-> = {};
+const paramMap: Record<string, { headers: Array<{ name: string; required: boolean }>; body: Array<{ name: string; required: boolean }> }> = {};
 
 for (const endpoint of endpointJson) {
 	const { operation } = endpoint;
@@ -44,7 +53,6 @@ for (const endpoint of endpointJson) {
 		paramMap[operation] = { headers: [], body: [] };
 	}
 
-	// Headers
 	for (let i = 1; i <= 4; i++) {
 		const headerName = endpoint[`headers_${i}_name` as keyof typeof endpoint] as string;
 		const headerRequired = endpoint[`headers_${i}_required` as keyof typeof endpoint] as boolean;
@@ -53,7 +61,6 @@ for (const endpoint of endpointJson) {
 		}
 	}
 
-	// Body parameters
 	for (let i = 1; i <= 4; i++) {
 		const bodyName = endpoint[`body_${i}_name` as keyof typeof endpoint] as string;
 		const bodyRequired = endpoint[`body_${i}_required` as keyof typeof endpoint] as boolean;
@@ -63,7 +70,6 @@ for (const endpoint of endpointJson) {
 	}
 }
 
-// operationごとにmethodとpathをマッピング
 const endpointMap: Record<string, { method: string; path: string }> = {};
 for (const { operation, method, path } of endpointJson) {
 	endpointMap[operation] = { method: method.toUpperCase(), path };
@@ -71,56 +77,45 @@ for (const { operation, method, path } of endpointJson) {
 
 export class EmarsysLoyalty implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Emarsys Loyalty v3.',
-		name: 'emarsysLoyalty',
-		icon: 'file:emarsys.svg',
-		group: ['transform'],
-		version: 1,
-		subtitle: '={{$parameter["resource"] + ": " + $parameter["action"]}}',
-		description: 'Interact with Emarsys Loyalty API',
-		defaults: {
-			name: 'Emarsys Loyalty',
-		},
+		displayName: description.displayName,
+		name: description.name,
+		icon: description.icon,
+		group: description.group,
+		version: description.version,
+		description: '',
+		defaults: description.defaults,
 		inputs: ['main' as NodeConnectionType],
 		outputs: ['main' as NodeConnectionType],
-		credentials: [
-			{
-				name: 'emarsysLoyaltyApi',
-				required: true,
-			},
-		],
-		properties: typedProperties,
+		credentials: description.credentials,
+		requestDefaults: {baseURL: description.requestDefaults?.baseURL},
+		properties: typedProperties
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
-		const baseUrl = 'https://contact-api.loyalsys.io/api/v4'; // Assuming a default base URL since not provided in JSON
+		const baseUrl = description.requestDefaults?.baseURL;
 
 		for (let i = 0; i < items.length; i++) {
 			try {
-				// アクションとAPIエンドポイント情報
 				const action = this.getNodeParameter('action', i) as string;
 				const endpoint = endpointMap[action];
-				if (!endpoint) {
-					throw new NodeOperationError(this.getNode(), `Unknown action: ${action}`);
-				}
+				if (!endpoint) throw new NodeOperationError(this.getNode(), `Unknown action: ${action}`);
+
 				const { method, path } = endpoint;
 				const url = `${baseUrl}${path}`;
-				const credentials = await this.getCredentials('emarsysLoyaltyApi');
+				const credentials = await this.getCredentials(description.credentials[0].name);
 
-				// ヘッダーとボディのパラメータ定義
 				const headerParams = paramMap[action]?.headers ?? [];
 				const bodyParams = paramMap[action]?.body ?? [];
 
-				// ヘッダーとボディの初期化
 				const headers: Record<string, string> = {
 					[credentials.name as string]: credentials.value as string,
 					'Content-Type': 'application/json',
 				};
+
 				const body: IDataObject = {};
 
-				// ヘッダーの値を追加
 				for (const { name, required } of headerParams) {
 					let val: any = null;
 					try {
@@ -135,7 +130,6 @@ export class EmarsysLoyalty implements INodeType {
 					}
 				}
 
-				// ボディの値を追加
 				for (const { name, required } of bodyParams) {
 					let val: any = null;
 					let type: string | undefined;
@@ -152,7 +146,6 @@ export class EmarsysLoyalty implements INodeType {
 					}
 				}
 
-				// リクエストオプション
 				const options: Record<string, any> = {
 					method,
 					url,
@@ -161,12 +154,10 @@ export class EmarsysLoyalty implements INodeType {
 				};
 				if (Object.keys(body).length) options.body = body;
 
-				// API呼び出しとレスポンス処理
 				const response = await this.helpers.request({ ...options, resolveWithFullResponse: true });
 				const contentType = response.headers['content-type'];
 				const responseBody = response.body;
 
-				// レスポンスを返却データに整形
 				if (contentType?.includes('application/json')) {
 					let data: unknown;
 					try {
