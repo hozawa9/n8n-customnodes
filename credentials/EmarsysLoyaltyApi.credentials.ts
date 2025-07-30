@@ -1,35 +1,38 @@
 import {
   ICredentialType,
-  NodePropertyTypes,
+	INodeProperties,
 } from 'n8n-workflow';
 
+const credentialParam = require('./headerAuthCredentialParams_emarsysLoyaltyApi.json') as {
+	name: string;
+	displayName: string;
+	documentationUrl: string;
+	properties: Array<{
+		name: string;
+		displayName: string;
+	}>;
+};
+
 export class EmarsysLoyaltyApi implements ICredentialType {
-  name = 'emarsysLoyaltyApi';
-  displayName = 'Emarsys Loyalty API';
-  documentationUrl = '';
-  properties = [
+  name = credentialParam?.name;
+  displayName = credentialParam?.displayName;
+  documentationUrl = credentialParam?.documentationUrl;
+  properties: INodeProperties[] = [
     {
       displayName: 'Name',
-      name: 'name',
-      type: 'string' as NodePropertyTypes,
+      name: 'x-api-key',
+      type: 'string',
       default: '',
       required: true,
-      description: 'The name of the header to set, e.g., Authorization.',
+      description: '',
     },
     {
       displayName: 'Value',
-      name: 'value',
-      type: 'string' as NodePropertyTypes,
+      name: credentialParam?.properties[1]?.name,
+      type: 'string',
       default: '',
       required: true,
-      description: 'The value to use in the header. Include Bearer prefix if needed.',
-    },
-    {
-      displayName: 'Ignore SSL Issues',
-      name: 'allowUnauthorizedCerts',
-      type: 'boolean' as NodePropertyTypes,
-      default: false,
-      description: 'Set to true to allow self-signed SSL certificates',
+      description: '',
     },
   ];
 
