@@ -1,0 +1,1 @@
+{"displayName":"Emarsys Loyalty","name":"emarsysLoyalty","icon":"file:emarsys.svg","group":[],"version":"1","defaults":{},"credentials":[{"name":"emarsysLoyaltyApi","required":true}],"requestDefaults":{"baseURL":"https://contact-api.loyalsys.io/api/v4"}}

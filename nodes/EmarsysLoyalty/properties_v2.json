@@ -1,0 +1,272 @@
+[
+  {
+    "displayName": "Resource",
+    "name": "resource",
+    "type": "options",
+    "options": [
+      {
+        "name": "Contact",
+        "value": "contact"
+      }
+    ],
+    "default": "contact"
+  },
+  {
+    "displayName": "Action",
+    "name": "action",
+    "type": "options",
+    "displayOptions": {
+      "show": {
+        "resource": [
+          "contact"
+        ]
+      }
+    },
+    "options": [
+      {
+        "name": "deleteContact",
+        "value": "deleteContact"
+      },
+      {
+        "name": "addContact",
+        "value": "addContact"
+      },
+      {
+        "name": "getContactLoyaltyInfo",
+        "value": "getContactLoyaltyInfo"
+      },
+      {
+        "name": "getHashedXContactId",
+        "value": "getHashedXContactId"
+      },
+      {
+        "name": "getContactActivities",
+        "value": "getContactActivities"
+      },
+      {
+        "name": "changeContactLoyaltyPlan",
+        "value": "changeContactLoyaltyPlan"
+      },
+      {
+        "name": "getProgramSettings",
+        "value": "getProgramSettings"
+      },
+      {
+        "name": "getContactActions",
+        "value": "getContactActions"
+      },
+      {
+        "name": "getContactTiers",
+        "value": "getContactTiers"
+      },
+      {
+        "name": "downgradeContactTiers",
+        "value": "downgradeContactTiers"
+      },
+      {
+        "name": "upgradeContactTiers",
+        "value": "upgradeContactTiers"
+      }
+    ],
+    "default": "deleteContact"
+  },
+  {
+    "displayName": "xContactId",
+    "name": "xContactId",
+    "type": "string",
+    "default": "",
+    "required": true,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "deleteContact",
+          "addContact",
+          "getContactLoyaltyInfo",
+          "getHashedXContactId",
+          "getContactActivities",
+          "changeContactLoyaltyPlan",
+          "getProgramSettings",
+          "getContactActions",
+          "getContactTiers",
+          "downgradeContactTiers",
+          "upgradeContactTiers"
+        ]
+      }
+    },
+    "description": "External ID of the contact"
+  },
+  {
+    "displayName": "xInitiatedBy",
+    "name": "xInitiatedBy",
+    "type": "string",
+    "default": "",
+    "required": false,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "deleteContact"
+        ]
+      }
+    },
+    "description": "Initiator ID"
+  },
+  {
+    "displayName": "withPointsAllocations",
+    "name": "withPointsAllocations",
+    "type": "string",
+    "default": "",
+    "required": false,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "addContact"
+        ]
+      }
+    },
+    "description": "Include points allocations"
+  },
+  {
+    "displayName": "withTierExpiration",
+    "name": "withTierExpiration",
+    "type": "string",
+    "default": "",
+    "required": false,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "addContact"
+        ]
+      }
+    },
+    "description": "Include tier expiration"
+  },
+  {
+    "displayName": "xLanguage",
+    "name": "xLanguage",
+    "type": "string",
+    "default": "",
+    "required": false,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "addContact",
+          "getContactActivities",
+          "getProgramSettings",
+          "getContactActions",
+          "getContactTiers"
+        ]
+      }
+    },
+    "description": "ISO Language Code"
+  },
+  {
+    "displayName": "xPlanId",
+    "name": "xPlanId",
+    "type": "string",
+    "default": "",
+    "required": false,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "getContactLoyaltyInfo",
+          "changeContactLoyaltyPlan"
+        ]
+      }
+    },
+    "description": "Plan ID"
+  },
+  {
+    "displayName": "xCurrency",
+    "name": "xCurrency",
+    "type": "string",
+    "default": "",
+    "required": false,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "getProgramSettings",
+          "getContactActions"
+        ]
+      }
+    },
+    "description": "Currency Code"
+  },
+  {
+    "displayName": "xMarket",
+    "name": "xMarket",
+    "type": "string",
+    "default": "",
+    "required": false,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "getProgramSettings",
+          "getContactTiers"
+        ]
+      }
+    },
+    "description": "Market Code"
+  },
+  {
+    "displayName": "xExitTo",
+    "name": "xExitTo",
+    "type": "string",
+    "default": "",
+    "required": false,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "downgradeContactTiers"
+        ]
+      }
+    },
+    "description": "Exit destination tier"
+  },
+  {
+    "displayName": "xReasonForTierChange",
+    "name": "xReasonForTierChange",
+    "type": "string",
+    "default": "",
+    "required": false,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "downgradeContactTiers",
+          "upgradeContactTiers"
+        ]
+      }
+    },
+    "description": "Reason for tier change"
+  },
+  {
+    "displayName": "xTierId",
+    "name": "xTierId",
+    "type": "string",
+    "default": "",
+    "required": false,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "downgradeContactTiers",
+          "upgradeContactTiers"
+        ]
+      }
+    },
+    "description": "Tier ID"
+  },
+  {
+    "displayName": "Request Body (JSON)",
+    "name": "body",
+    "type": "string",
+    "default": "",
+    "required": true,
+    "displayOptions": {
+      "show": {
+        "action": [
+          "changeContactLoyaltyPlan"
+        ]
+      }
+    },
+    "description": "JSON string for request body"
+  }
+]

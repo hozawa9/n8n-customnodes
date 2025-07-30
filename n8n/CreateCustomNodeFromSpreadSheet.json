@@ -1,0 +1,1267 @@
+{
+  "name": "CreateCustomNodeFromSpreadSheet",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        740,
+        680
+      ],
+      "id": "eb556cc0-46f8-40df-8953-beb3b78c7280",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "master",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        680
+      ],
+      "id": "f3105e23-d75b-4f23-9da4-ee1a9e52efb6",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SaqHyM8qYEgZZYqe",
+          "name": "Google Sheets Narita"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "resource",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        680
+      ],
+      "id": "06311d18-424c-43bc-a4f9-9095de6c8165",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "master",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "resource",
+              "lookupValue": "={{ $json.value }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1840,
+        920
+      ],
+      "id": "2745e0eb-f540-44e8-a80a-49a1195a3147",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SaqHyM8qYEgZZYqe",
+          "name": "Google Sheets Narita"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2220,
+        920
+      ],
+      "id": "a390867c-5fba-4390-8b71-7e5d8615c9d8",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd044a9d-4659-4536-8cfa-b613caf033bf",
+              "name": "displayName",
+              "value": "=Action",
+              "type": "string"
+            },
+            {
+              "id": "0c9be7b8-5150-4066-978e-a153d9c9d8c5",
+              "name": "name",
+              "value": "=action",
+              "type": "string"
+            },
+            {
+              "id": "e32155fe-9c29-4fb9-825a-138edbf6375f",
+              "name": "type",
+              "value": "={{ \"options\" }}",
+              "type": "string"
+            },
+            {
+              "id": "df3a1c1d-4cbd-482d-ad0c-76fc3405f926",
+              "name": "displayOptions",
+              "value": "={ show: {resource: ['{{ $('Create options').item.json.value }}'] }}",
+              "type": "object"
+            },
+            {
+              "id": "8c867886-0e74-4fcd-bcba-35884dedc0a9",
+              "name": "options",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            },
+            {
+              "id": "35cdc332-d760-47cb-b03f-625f1052c388",
+              "name": "default",
+              "value": "={{ $json.data[0].value }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2420,
+        920
+      ],
+      "id": "7fc5481d-cd7e-41b4-9a73-f4649b81ad3d",
+      "name": "Create operation"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a595adc2-a242-4bf6-b9cd-6b5da23814c1",
+              "name": "name",
+              "value": "={{ $json.resource.replace(/^./, val => val.toUpperCase()) }}",
+              "type": "string"
+            },
+            {
+              "id": "fe73c81f-f9d4-43fc-b983-e6ca71a040d4",
+              "name": "value",
+              "value": "={{ $json.resource }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1340,
+        680
+      ],
+      "id": "b76f494a-b2bc-45ce-a211-95f0fd910ef0",
+      "name": "Create options"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8583e927-13ee-4abc-88d5-9838276c2703",
+              "name": "name",
+              "value": "={{ $json.operation.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/\\b\\w/g, c => c.toUpperCase()) }}",
+              "type": "string"
+            },
+            {
+              "id": "096d5d81-1e1a-4c77-9cb2-af7d1dae3960",
+              "name": "value",
+              "value": "={{ $json.operation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2020,
+        920
+      ],
+      "id": "7f5046c8-85cc-4495-92b8-a3ac6d55cde7",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "resourceOptions",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        640
+      ],
+      "id": "3304e441-0846-403a-9627-645c9a69171c",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd044a9d-4659-4536-8cfa-b613caf033bf",
+              "name": "displayName",
+              "value": "=Resource",
+              "type": "string"
+            },
+            {
+              "id": "0c9be7b8-5150-4066-978e-a153d9c9d8c5",
+              "name": "name",
+              "value": "=resource",
+              "type": "string"
+            },
+            {
+              "id": "e32155fe-9c29-4fb9-825a-138edbf6375f",
+              "name": "type",
+              "value": "={{ \"options\" }}",
+              "type": "string"
+            },
+            {
+              "id": "8c867886-0e74-4fcd-bcba-35884dedc0a9",
+              "name": "options",
+              "value": "={{ $json.resourceOptions }}",
+              "type": "array"
+            },
+            {
+              "id": "35cdc332-d760-47cb-b03f-625f1052c388",
+              "name": "default",
+              "value": "={{ $json.resourceOptions[0].value }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2420,
+        640
+      ],
+      "id": "820b160d-6a4d-4a82-8f59-d5216dc9e836",
+      "name": "Create resource"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "operation"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        1260
+      ],
+      "id": "8c52684a-507c-4bd3-aef5-8b1c08af8b65",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1493139478,
+          "mode": "list",
+          "cachedResultName": "additional_field_list",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU/edit#gid=1493139478"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        1200
+      ],
+      "id": "5a4ddc06-662b-4983-8513-5f8760d8f4ef",
+      "name": "Google Sheets4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SaqHyM8qYEgZZYqe",
+          "name": "Google Sheets Narita"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "operation"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        1460
+      ],
+      "id": "23f14641-5c99-4547-9997-7da06b131803",
+      "name": "Aggregate3"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 357659298,
+          "mode": "list",
+          "cachedResultName": "additional_fields_for_operation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dIZh-2diSHXPYsn9ky-cI7_EF9LakLQ790RO2qsUqmU/edit#gid=357659298"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1880,
+        1260
+      ],
+      "id": "873025df-2f82-4e90-b93e-d77af53afdb2",
+      "name": "Get additionalField-to-operaton relation",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SaqHyM8qYEgZZYqe",
+          "name": "Google Sheets Narita"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d0a90e65-daca-4808-b2df-93719cfdb5e4",
+              "leftValue": "={{ $json.additional_field }}",
+              "rightValue": "={{ $('Create Json for Additional Field').item.json.name }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        1260
+      ],
+      "id": "9bc10523-b3fd-41f5-a695-88f89812e36f",
+      "name": "Filter operation by addtional field"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd044a9d-4659-4536-8cfa-b613caf033bf",
+              "name": "displayName",
+              "value": "={{ $('Create Json for Additional Field').item.json.displayName }}",
+              "type": "string"
+            },
+            {
+              "id": "0c9be7b8-5150-4066-978e-a153d9c9d8c5",
+              "name": "name",
+              "value": "={{ $('Create Json for Additional Field').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "e32155fe-9c29-4fb9-825a-138edbf6375f",
+              "name": "type",
+              "value": "={{ $('Create Json for Additional Field').item.json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "76cf121d-10b5-40b3-9ea5-a8526c8d1ac4",
+              "name": "placeholder",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "35cdc332-d760-47cb-b03f-625f1052c388",
+              "name": "default",
+              "value": "={{ $('Create Json for Additional Field').item.json.default }}",
+              "type": "string"
+            },
+            {
+              "id": "df3a1c1d-4cbd-482d-ad0c-76fc3405f926",
+              "name": "displayOptions",
+              "value": "={ show: {action: [{{ $json.operation }}] }}",
+              "type": "object"
+            },
+            {
+              "id": "8c867886-0e74-4fcd-bcba-35884dedc0a9",
+              "name": "description",
+              "value": "={{ $('Create Json for Additional Field').item.json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "9cc0f5a5-5ce8-4aab-b920-9478c645d824",
+              "name": "required",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3040,
+        1460
+      ],
+      "id": "942e59a6-f00b-4d87-a4a3-6a4a7bddba33",
+      "name": "Create Additional Field for Optional"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd044a9d-4659-4536-8cfa-b613caf033bf",
+              "name": "displayName",
+              "value": "={{ $('Create Json for Additional Field').item.json.displayName }}",
+              "type": "string"
+            },
+            {
+              "id": "0c9be7b8-5150-4066-978e-a153d9c9d8c5",
+              "name": "name",
+              "value": "={{ $('Create Json for Additional Field').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "e32155fe-9c29-4fb9-825a-138edbf6375f",
+              "name": "type",
+              "value": "={{ $('Create Json for Additional Field').item.json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "92016b4e-6ac2-4266-9329-c11f61b7003d",
+              "name": "placeholder",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "35cdc332-d760-47cb-b03f-625f1052c388",
+              "name": "default",
+              "value": "={{ $('Create Json for Additional Field').item.json.default }}",
+              "type": "string"
+            },
+            {
+              "id": "df3a1c1d-4cbd-482d-ad0c-76fc3405f926",
+              "name": "displayOptions",
+              "value": "={ show: {action: [{{ $json.operation }}] }}",
+              "type": "object"
+            },
+            {
+              "id": "8c867886-0e74-4fcd-bcba-35884dedc0a9",
+              "name": "description",
+              "value": "={{ $('Create Json for Additional Field').item.json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "d50892e7-0be3-4e11-9325-4decfd74b749",
+              "name": "required",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3040,
+        1260
+      ],
+      "id": "223d5e36-3427-4c67-9174-c566e9c7f53b",
+      "name": "Create Additional Field for Required"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "48e81e0c-abe9-4ba1-ac15-ccc41631b413",
+              "leftValue": "={{ $json.required }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2340,
+        1260
+      ],
+      "id": "de400001-c508-483e-a708-c11d0de81d38",
+      "name": "If Additional Field is required"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1660,
+        1200
+      ],
+      "id": "13d960d0-6af9-4c4c-b1ec-bc7c6b6595d1",
+      "name": "Create Json for Additional Field"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1640,
+        860
+      ],
+      "id": "0d2326ec-7e28-4689-9835-29b77c726199",
+      "name": "Create Operations Json for Resource"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = [\n  ...$('Create resource').all(),\n  ...$('Create Operations Json for Resource').all(),\n  ...$('Create Json for Additional Field').all()\n];\n\nconst propertiesArray = allItems.map(item => item.json);\n\nreturn [\n  {\n    json: {\n      properties: propertiesArray\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        1780
+      ],
+      "id": "d8cfaeb5-c0bc-4013-9f2c-441432a2f495",
+      "name": "Create Properties"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "C:\\Users\\hozaw\\WORK\\projects\\happo-en\\FY2025\\1Q\\tasks\\n8n-create-customNode-browser\\nodes\\EmarsysLoyalty\\properties_test01.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        1780
+      ],
+      "id": "4043b790-76c3-461b-bde3-05cdbeaf4369",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "=properties",
+        "options": {
+          "fileName": "properties_test01.json"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1180,
+        1780
+      ],
+      "id": "f2a83adf-6606-4227-a385-84726741bccd",
+      "name": "Convert to File"
+    }
+  ],
+  "pinData": {
+    "Create Properties": [
+      {
+        "json": {
+          "properties": [
+            {
+              "displayName": "Resource",
+              "name": "resource",
+              "type": "options",
+              "options": [
+                {
+                  "name": "Contact",
+                  "value": "contact"
+                },
+                {
+                  "name": "Plan",
+                  "value": "plan"
+                },
+                {
+                  "name": "Actions",
+                  "value": "actions"
+                },
+                {
+                  "name": "Tiers",
+                  "value": "tiers"
+                }
+              ],
+              "default": "contact"
+            },
+            {
+              "displayName": "Action",
+              "name": "action",
+              "type": "options",
+              "displayOptions": {
+                "show": {
+                  "resource": [
+                    "contact"
+                  ]
+                }
+              },
+              "options": [
+                {
+                  "name": "Delete Contact",
+                  "value": "deleteContact"
+                },
+                {
+                  "name": "Add Contact",
+                  "value": "addContact"
+                },
+                {
+                  "name": "Get Contact Loyalty Info",
+                  "value": "getContactLoyaltyInfo"
+                },
+                {
+                  "name": "Get Hashed Xcontactid",
+                  "value": "getHashedXcontactid"
+                },
+                {
+                  "name": "Get Contact Activities",
+                  "value": "getContactActivities"
+                }
+              ],
+              "default": "deleteContact"
+            },
+            {
+              "displayName": "Action",
+              "name": "action",
+              "type": "options",
+              "displayOptions": {
+                "show": {
+                  "resource": [
+                    "plan"
+                  ]
+                }
+              },
+              "options": [
+                {
+                  "name": "Change Contact Loyalty Plan",
+                  "value": "changeContactLoyaltyPlan"
+                },
+                {
+                  "name": "Get Program Settings",
+                  "value": "getProgramSettings"
+                }
+              ],
+              "default": "changeContactLoyaltyPlan"
+            },
+            {
+              "displayName": "Action",
+              "name": "action",
+              "type": "options",
+              "displayOptions": {
+                "show": {
+                  "resource": [
+                    "actions"
+                  ]
+                }
+              },
+              "options": [
+                {
+                  "name": "Get Contact Actions",
+                  "value": "getContactActions"
+                }
+              ],
+              "default": "getContactActions"
+            },
+            {
+              "displayName": "Action",
+              "name": "action",
+              "type": "options",
+              "displayOptions": {
+                "show": {
+                  "resource": [
+                    "tiers"
+                  ]
+                }
+              },
+              "options": [
+                {
+                  "name": "Get Contact Tiers",
+                  "value": "getContactTiers"
+                },
+                {
+                  "name": "Downgrade Contact Tiers",
+                  "value": "downgradeContactTiers"
+                },
+                {
+                  "name": "Upgrade Contact Tiers",
+                  "value": "upgradeContactTiers"
+                }
+              ],
+              "default": "getContactTiers"
+            },
+            {
+              "displayName": "x-contact-id",
+              "name": "xContactId",
+              "type": "string",
+              "placeholder": "",
+              "default": "",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "deleteContact",
+                    "addContact",
+                    "getContactLoyaltyInfo",
+                    "getHashedXcontactid",
+                    "getContactActivities",
+                    "changeContactLoyaltyPlan",
+                    "getProgramSettings",
+                    "getContactActions",
+                    "getContactTiers",
+                    "downgradeContactTiers",
+                    "upgradeContactTiers"
+                  ]
+                }
+              },
+              "description": "External ID of the contact .",
+              "required": true
+            },
+            {
+              "displayName": "x-initiated-by",
+              "name": "xInitiatedBy",
+              "type": "string",
+              "placeholder": "",
+              "default": "contact",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "deleteContact"
+                  ]
+                }
+              },
+              "description": "The entity which initiated the action. Can currently be one of the following strings: contact, customer",
+              "required": false
+            },
+            {
+              "displayName": "withPointsAllocations",
+              "name": "withPointsAllocations",
+              "type": "string",
+              "placeholder": "",
+              "default": "false",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "addContact"
+                  ]
+                }
+              },
+              "description": "Whether you need the details about points when they were accumulated and their expiration date. Send this parameter in the query string =true to get this data.",
+              "required": false
+            },
+            {
+              "displayName": "withTierExpiration",
+              "name": "withTierExpiration",
+              "type": "string",
+              "placeholder": "",
+              "default": "false",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "addContact"
+                  ]
+                }
+              },
+              "description": "Whether you need the tier expiration data. Send this param in the querystring =true to get this data.",
+              "required": false
+            },
+            {
+              "displayName": "x-language",
+              "name": "xLanguage",
+              "type": "string",
+              "placeholder": "",
+              "default": "",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "addContact",
+                    "getContactActivities",
+                    "getProgramSettings",
+                    "getContactActions",
+                    "getContactTiers"
+                  ]
+                }
+              },
+              "description": "The ISO identifier of the language in which to return the results (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). Please note that the format of the language header depends on the language selected in the user interface. For example, if you selected \"English\" the proper code is en. However, if in the user interface you specified a particular locale, for example \"English (United States)\", the correct format is en-US. Some other examples: \"Spanish\": es vs. \"Spanish (Spain)\": es-ES and \"Chinese\": zh vs. \"Chinese (People's Republic of China)\": zh-CN.'",
+              "required": false
+            },
+            {
+              "displayName": "x-plan-id",
+              "name": "xPlanId",
+              "type": "string",
+              "placeholder": "",
+              "default": "",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "getContactLoyaltyInfo",
+                    "changeContactLoyaltyPlan"
+                  ]
+                }
+              },
+              "description": "The ID of the plan as defined by the marketer.",
+              "required": false
+            },
+            {
+              "displayName": "x-currency",
+              "name": "xCurrency",
+              "type": "string",
+              "placeholder": "",
+              "default": "",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "getProgramSettings",
+                    "getContactActions"
+                  ]
+                }
+              },
+              "description": "The ISO identifier of the currency in which to return the results. (https://en.wikipedia.org/wiki/ISO_4217)",
+              "required": false
+            },
+            {
+              "displayName": "x-market",
+              "name": "xMarket",
+              "type": "string",
+              "placeholder": "",
+              "default": "",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "getProgramSettings",
+                    "getContactTiers"
+                  ]
+                }
+              },
+              "description": "A string representing the target market for which to return the results.",
+              "required": false
+            },
+            {
+              "displayName": "x-exit-to",
+              "name": "xExitTo",
+              "type": "string",
+              "placeholder": "",
+              "default": "",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "downgradeContactTiers"
+                  ]
+                }
+              },
+              "description": "What to do with the contact after removal from invitation-only tier. If you are downgrading from a regular tier this is not relevant. The value can be one of the following strings: auto - the contact will be placed in the tier matching his current status points (tierId is then not required) manual - the contact will be placed in the tier specified by the tierId passed in this API request (tierId is then required)",
+              "required": false
+            },
+            {
+              "displayName": "x-reason-for-tier-change",
+              "name": "xReasonForTierChange",
+              "type": "string",
+              "placeholder": "",
+              "default": "",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "downgradeContactTiers",
+                    "upgradeContactTiers"
+                  ]
+                }
+              },
+              "description": "A short reason why the contact tier was changed",
+              "required": false
+            },
+            {
+              "displayName": "x-tier-id",
+              "name": "xTierId",
+              "type": "string",
+              "placeholder": "",
+              "default": "",
+              "displayOptions": {
+                "show": {
+                  "action": [
+                    "downgradeContactTiers",
+                    "upgradeContactTiers"
+                  ]
+                }
+              },
+              "description": "The ID of the tier",
+              "required": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Create options",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Create operation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create operation": {
+      "main": [
+        [
+          {
+            "node": "Create Operations Json for Resource",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create options": {
+      "main": [
+        [
+          {
+            "node": "Create Operations Json for Resource",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Create resource",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Create Additional Field for Required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets4": {
+      "main": [
+        [
+          {
+            "node": "Create Json for Additional Field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "Create Additional Field for Optional",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get additionalField-to-operaton relation": {
+      "main": [
+        [
+          {
+            "node": "Filter operation by addtional field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter operation by addtional field": {
+      "main": [
+        [
+          {
+            "node": "If Additional Field is required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Additional Field for Optional": {
+      "main": [
+        [
+          {
+            "node": "Create Json for Additional Field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Additional Field for Required": {
+      "main": [
+        [
+          {
+            "node": "Create Json for Additional Field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Additional Field is required": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create resource": {
+      "main": [
+        []
+      ]
+    },
+    "Create Json for Additional Field": {
+      "main": [
+        [
+          {
+            "node": "Create Properties",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get additionalField-to-operaton relation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Operations Json for Resource": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Properties": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "774babc6-687f-4e71-a47b-b83d3052f68a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fee89367709ee1b173e38faa4700676e54385d2528c4d1894433ce13df893cc2"
+  },
+  "id": "VPYGLzkgDLmJkRjm",
+  "tags": []
+}

@@ -4,211 +4,187 @@ import type {
 	INodeType,
 	INodeTypeDescription,
 	NodeConnectionType,
+	INodeProperties,
+	IDataObject,
+	Icon
 } from 'n8n-workflow';
+const { NodeOperationError } = require('n8n-workflow');
 
-import { NodeOperationError } from 'n8n-workflow';
+const description = require('./description.json') as {
+	displayName: string;
+	name: string;
+	icon: Icon | undefined;
+	group: string[];
+	version: number;
+	defaults: object;
+	credentials: Array<{ name: string; required: boolean }>;
+	requestDefaults?: { baseURL: string };
+};
+
+const typedProperties = require('./properties_test03.json') as INodeProperties[];
+const endpointJson = require('./endpoint.json') as Array<{
+	resource: string;
+	path: string;
+	method: string;
+	operation: string;
+	headers_1_name: string;
+	headers_1_required: boolean;
+	headers_2_name: string;
+	headers_2_required: boolean;
+	headers_3_name: string;
+	headers_3_required: boolean;
+	headers_4_name: string;
+	headers_4_required: boolean;
+	body_1_name: string;
+	body_1_required: boolean;
+	body_2_name: string;
+	body_2_required: boolean;
+	body_3_name: string;
+	body_3_required: boolean;
+	body_4_name: string;
+	body_4_required: boolean;
+}>;
+
+const paramMap: Record<string, { headers: Array<{ name: string; required: boolean }>; body: Array<{ name: string; required: boolean }> }> = {};
+
+for (const endpoint of endpointJson) {
+	const { operation } = endpoint;
+	if (!paramMap[operation]) {
+		paramMap[operation] = { headers: [], body: [] };
+	}
+
+	for (let i = 1; i <= 4; i++) {
+		const headerName = endpoint[`headers_${i}_name` as keyof typeof endpoint] as string;
+		const headerRequired = endpoint[`headers_${i}_required` as keyof typeof endpoint] as boolean;
+		if (headerName) {
+			paramMap[operation].headers.push({ name: headerName, required: headerRequired });
+		}
+	}
+
+	for (let i = 1; i <= 4; i++) {
+		const bodyName = endpoint[`body_${i}_name` as keyof typeof endpoint] as string;
+		const bodyRequired = endpoint[`body_${i}_required` as keyof typeof endpoint] as boolean;
+		if (bodyName) {
+			paramMap[operation].body.push({ name: bodyName, required: bodyRequired });
+		}
+	}
+}
+
+const endpointMap: Record<string, { method: string; path: string }> = {};
+for (const { operation, method, path } of endpointJson) {
+	endpointMap[operation] = { method: method.toUpperCase(), path };
+}
 
 export class EmarsysLoyalty implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Emarsys Loyalty',
-		name: 'emarsysLoyalty',
-		icon: 'file:emarsys.svg',
-		group: ['transform'],
-		version: 1,
-		subtitle: '={{$parameter["resource"] + ": " + $parameter["action"]}}',
-		description: 'Interact with Emarsys Loyalty API',
-		defaults: {
-			name: 'Emarsys Loyalty',
-		},
+		displayName: description.displayName,
+		name: description.name,
+		icon: description.icon,
+		group: description.group,
+		version: description.version,
+		description: '',
+		defaults: description.defaults,
 		inputs: ['main' as NodeConnectionType],
 		outputs: ['main' as NodeConnectionType],
-		credentials: [
-			{
-				name: 'emarsysLoyaltyApi',
-				required: true,
-			},
-		],
-		properties: [
-			{
-				displayName: 'Resource',
-				name: 'resource',
-				type: 'options',
-				options: [
-					{ name: 'Contact', value: 'contact' },
-					{ name: 'Actions', value: 'actions' },
-					{ name: 'Tiers', value: 'tiers' },
-					{ name: 'Referral', value: 'referral' },
-				],
-				default: 'contact',
-			},
-			{
-				displayName: 'Action',
-				name: 'action',
-				type: 'options',
-				displayOptions: { show: { resource: ['contact'] } },
-				options: [
-					{ name: "Get Contact Info", value: 'contact' },
-					{ name: "Get Contact Activities", value: 'activities' },
-					{ name: "Hash Contact Id", value: 'hash'},
-				],
-				default: 'contact',
-			},
-			{
-				displayName: 'Action',
-				name: 'action',
-				type: 'options',
-				displayOptions: { show: { resource: ['actions'] } },
-				options: [
-					{ name: "Get Contact Actions", value: 'actions' },
-				],
-				default: 'actions',
-			},
-			{
-				displayName: 'Action',
-				name: 'action',
-				type: 'options',
-				displayOptions: { show: { resource: ['tiers'] } },
-				options: [
-					{ name: "Get Contact Tiers", value: 'tiers' },
-				],
-				default: 'tiers',
-			},
-			{
-				displayName: 'Action',
-				name: 'action',
-				type: 'options',
-				displayOptions: { show: { resource: ['referral'] } },
-				options: [
-					{ name: "Get Referral Content", value: 'referralFriendContent' },
-					{ name: "Get Referrals", value: 'referrals' },
-				],
-				default: 'referralFriendContent',
-			},
-			{
-				displayName: 'Contact External ID',
-				name: 'xContactId',
-				type: 'string',
-				default: '',
-				required: true,
-				displayOptions: {
-					show: {
-						action: [
-							'contact', 'activities', 'hash', 'actions', 'tiers', 'referralFriendContent', 'referrals'
-						]
-					},
-				},
-				description: 'External ID of the contact (required)',
-			},
-			{
-				displayName: 'Language (ISO Code)',
-				name: 'xLanguage',
-				type: 'string',
-				default: '',
-				displayOptions: {
-					show: {
-						action: [
-							'contact', 'activities', 'actions', 'tiers', 'referralFriendContent', 'referrals'
-						]
-					},
-				},
-				description: 'Optional. Example: en, es, zh-CN etc.',
-			},
-			{
-				displayName: 'Currency Code',
-				name: 'xCurrency',
-				type: 'string',
-				default: '',
-				displayOptions: {
-					show: {
-						action: ['actions']
-					},
-				},
-				description: 'Optional. Example: USD, EUR',
-			},
-			{
-				displayName: 'Market Code',
-				name: 'xMarket',
-				type: 'string',
-				default: '',
-				displayOptions: {
-					show: {
-						action: ['tiers', 'referralFriendContent', 'referrals']
-					},
-				},
-				description: 'Optional market identifier code.',
-			},
-			{
-				displayName: 'Referral ID',
-				name: 'xReferralId',
-				type: 'string',
-				default: '',
-				required: true,
-				displayOptions: {
-					show: {
-						action: ['referralFriendContent']
-					},
-				},
-				description: 'The referralId which is returned when getting a contact\'s referrals.',
-			},
-		],
+		credentials: description.credentials,
+		requestDefaults: {baseURL: description.requestDefaults?.baseURL},
+		properties: typedProperties
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
-		const action = this.getNodeParameter('action', 0) as string;
-
-		const endpointMap: { [key: string]: string } = {
-			contact: '/api/v4/contact',
-			activities: '/api/v4/contact/activities',
-			actions: '/api/v4/contact/actions',
-			tiers: '/api/v4/contact/tiers',
-			referralFriendContent: '/api/v4/contact/referralFriendContent',
-			referrals: '/api/v4/contact/referrals',
-			hash: '/api/v4/contact/hash',
-		};
-
-		const baseUrl = 'https://contact-api.loyalsys.io';
+		const baseUrl = description.requestDefaults?.baseURL;
 
 		for (let i = 0; i < items.length; i++) {
 			try {
-				const credentials = await this.getCredentials('emarsysLoyaltyApi');
-				const url = `${baseUrl}${endpointMap[action]}`;
-				const headers: { [key: string]: string } = {
+				const action = this.getNodeParameter('action', i) as string;
+				const endpoint = endpointMap[action];
+				if (!endpoint) throw new NodeOperationError(this.getNode(), `Unknown action: ${action}`);
+
+				const { method, path } = endpoint;
+				const url = `${baseUrl}${path}`;
+				const credentials = await this.getCredentials(description.credentials[0].name);
+
+				const headerParams = paramMap[action]?.headers ?? [];
+				const bodyParams = paramMap[action]?.body ?? [];
+
+				const headers: Record<string, string> = {
 					[credentials.name as string]: credentials.value as string,
 					'Content-Type': 'application/json',
 				};
 
-				headers['x-contact-id'] = this.getNodeParameter('xContactId', i) as string;
-				const xLanguage = this.getNodeParameter('xLanguage', i, '') as string;
-				if (xLanguage) headers['x-language'] = xLanguage;
-				const xCurrency = this.getNodeParameter('xCurrency', i, '') as string;
-				if (xCurrency) headers['x-currency'] = xCurrency;
-				const xMarket = this.getNodeParameter('xMarket', i, '') as string;
-				if (xMarket) headers['x-market'] = xMarket;
-				const xReferralId = this.getNodeParameter('xReferralId', i, '') as string;
-				if (xReferralId) headers['x-referral-id'] = xReferralId;
+				const body: IDataObject = {};
 
-				const response = await this.helpers.request({
-					method: 'GET',
+				for (const { name, required } of headerParams) {
+					let val: any = null;
+					try {
+						val = this.getNodeParameter(name, i);
+					} catch {}
+
+					const displayName = typedProperties.find((p) => p.name === name)?.displayName ?? name;
+					if (val !== undefined && val !== '' && (required || val !== null)) {
+						headers[displayName] = String(val);
+					} else if (required) {
+						throw new NodeOperationError(this.getNode(), `Missing required header: ${displayName}`);
+					}
+				}
+
+				for (const { name, required } of bodyParams) {
+					let val: any = null;
+					let type: string | undefined;
+					try {
+						const paramDef = typedProperties.find((p) => p.name === name);
+						type = paramDef?.type;
+						val = this.getNodeParameter(name, i, type === 'boolean' ? false : undefined);
+					} catch {}
+
+					if (type === 'boolean' || (val !== undefined && val !== '' && (required || val !== null))) {
+						body[name] = type === 'boolean' ? Boolean(val) : val;
+					} else if (required) {
+						throw new NodeOperationError(this.getNode(), `Missing required body parameter: ${name}`);
+					}
+				}
+
+				const options: Record<string, any> = {
+					method,
 					url,
 					headers,
 					json: true,
-				});
+				};
+				if (Object.keys(body).length) options.body = body;
 
-				if (action === 'hash') {
-					returnData.push({ json: { result: typeof response === 'string' ? JSON.parse(response) : response } });
+				const response = await this.helpers.request({ ...options, resolveWithFullResponse: true });
+				const contentType = response.headers['content-type'];
+				const responseBody = response.body;
+
+				if (contentType?.includes('application/json')) {
+					let data: unknown;
+					try {
+						data = typeof responseBody === 'object' ? responseBody : JSON.parse(responseBody);
+					} catch {
+						data = { body: responseBody };
+					}
+
+					if (Array.isArray(data)) {
+						for (const item of data) returnData.push({ json: item });
+					} else if (typeof data === 'object' && data !== null) {
+						returnData.push({ json: data as IDataObject });
+					} else {
+						returnData.push({ json: { body: String(data) } });
+					}
 				} else {
-					returnData.push({ json: response });
+					returnData.push({ json: { body: responseBody } });
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {
-					returnData.push({ json: { error: error.message } });
+					returnData.push({ json: { error: (error as Error).message } });
 					continue;
 				}
 				throw new NodeOperationError(this.getNode(), error);
 			}
 		}
+
 		return [returnData];
 	}
 }
