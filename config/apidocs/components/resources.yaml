@@ -1,0 +1,24 @@
+ResourceOption:
+  type: object
+  required:
+    - name
+    - value
+  properties:
+    name:
+      type: string
+    value:
+      type: string
+
+ResourceOptionList:
+  type: array
+  items:
+    $ref: '#/ResourceOption'
+  default:
+    - name: Contact
+      value: contact
+    - name: Plan
+      value: plan
+    - name: Actions
+      value: action
+    - name: Tiers
+      value: tiers

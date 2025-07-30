@@ -1,0 +1,685 @@
+openapi: 3.0.0
+info:
+  title: Emarsys Loyalty API
+  version: 1.0.0
+servers:
+  - url: https://contact-api.loyalsys.io/api/v4
+tags: []
+paths:
+  /contact/:
+    delete:
+      summary: Delete Contact
+      security: []
+      tags:
+        - contact
+      description: Delete a contact using the xContactId header.
+      operationId: deleteContact
+      parameters:
+        - name: xContactId
+          in: header
+          required: true
+          description: Unique identifier for the contact to delete.
+          schema:
+            type: string
+          example: 123456
+        - name: xInitiatedBy
+          in: header
+          required: false
+          description: Optional initiator of the deletion request.
+          schema:
+            type: string
+          example: admin_user
+      responses:
+        '200':
+          $ref: '#/components/responses/responseSuccess'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /contact/join:
+    post:
+      summary: Add Contact
+      security: []
+      tags:
+        - contact
+      description: Add a new contact. Optional flags for point allocation and tier expiration can be set via query parameters.
+      operationId: addContact
+      parameters:
+        - name: withPointsAllocations
+          in: query
+          required: false
+          description: Flag to enable point allocations during contact creation.
+          schema:
+            type: string
+          example: true
+        - name: withTierExpiration
+          in: query
+          required: false
+          description: Flag to enable tier expiration processing.
+          schema:
+            type: string
+          example: true
+        - name: xContactId
+          in: header
+          required: true
+          description: Unique identifier for the contact being created.
+          schema:
+            type: string
+          example: abc123
+        - name: xLanguage
+          in: header
+          required: false
+          description: Preferred language for the contact.
+          schema:
+            type: string
+          example: en
+      responses:
+        '200':
+          $ref: '#/components/responses/responseSuccess'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /contact/contact:
+    get:
+      summary: Get Contact Loyalty Info
+      security: []
+      tags:
+        - contact
+      description: Retrieve loyalty information for the contact specified by the xContactId header.
+      operationId: getContactLoyaltyInfo
+      parameters:
+        - name: xContactId
+          in: header
+          required: true
+          description: Unique identifier for the contact.
+          schema:
+            type: string
+          example: abc123
+        - name: xPlanId
+          in: header
+          required: false
+          description: Plan ID to filter loyalty information by specific plan.
+          schema:
+            type: string
+          example: plan789
+      responses:
+        '200':
+          $ref: '#/components/responses/responseGetContactLoyaltyInfo'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /contact/hash:
+    get:
+      summary: Get Hashed XContactId
+      security: []
+      tags:
+        - contact
+      description: Retrieve the hashed version of the specified xContactId header value.
+      operationId: getHashedXContactId
+      parameters:
+        - name: xContactId
+          in: header
+          required: true
+          description: The contact ID to be hashed.
+          schema:
+            type: string
+          example: abc123
+      responses:
+        '200':
+          $ref: '#/components/responses/responseGetHashedXContactId'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /contact/activities:
+    get:
+      summary: Get Contact Activities
+      security: []
+      tags:
+        - contact
+      description: Retrieve the activity history associated with the specified contact ID.
+      operationId: getContactActivities
+      parameters:
+        - name: xContactId
+          in: header
+          required: true
+          description: Unique identifier of the contact whose activity history is being requested.
+          schema:
+            type: string
+          example: abc123
+        - name: xLanguage
+          in: header
+          required: false
+          description: Preferred language for localized activity descriptions.
+          schema:
+            type: string
+          example: en
+      responses:
+        '200':
+          $ref: '#/components/responses/responseGetContactActivities'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /contact/changeplans:
+    put:
+      summary: Change Contact Loyalty Plan
+      security: []
+      tags:
+        - plan
+      description: Update the loyalty point balances for a given contact, including balance, pending, status points and redeemed vouchers.
+      operationId: changeContactLoyaltyPlan
+      parameters:
+        - name: xContactId
+          in: header
+          required: true
+          description: Unique identifier for the contact.
+          schema:
+            type: string
+          example: abc123
+        - name: xPlanId
+          in: header
+          required: false
+          description: Identifier of the loyalty plan to update.
+          schema:
+            type: string
+          example: plan456
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - balancePoints
+                - pendingPoints
+                - redeemedVouchers
+                - statusPoints
+              properties:
+                balancePoints:
+                  type: integer
+                pendingPoints:
+                  type: integer
+                redeemedVouchers:
+                  type: integer
+                statusPoints:
+                  type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/responseSuccess'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /contact/programSettings:
+    get:
+      summary: Get Program Settings
+      security: []
+      tags:
+        - plan
+      description: Retrieve the program settings for the specified contact. Optionally accepts currency, language, and market headers to customize the response.
+      operationId: getProgramSettings
+      parameters:
+        - name: xContactId
+          in: header
+          required: true
+          description: Unique identifier of the contact.
+          schema:
+            type: string
+          example: abc123
+        - name: xCurrency
+          in: header
+          required: false
+          description: Currency code used to localize program settings.
+          schema:
+            type: string
+          example: JPY
+        - name: xLanguage
+          in: header
+          required: false
+          description: Preferred language for the response content.
+          schema:
+            type: string
+          example: ja
+        - name: xMarket
+          in: header
+          required: false
+          description: Market context for the program settings.
+          schema:
+            type: string
+          example: JP
+      responses:
+        '200':
+          $ref: '#/components/responses/responseGetProgramSettings'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /contact/actions:
+    get:
+      summary: Get Contact Actions
+      security: []
+      tags:
+        - actions
+      description: Retrieve available actions for the specified contact. Supports localization using language and currency headers.
+      operationId: getContactActions
+      parameters:
+        - name: xContactId
+          in: header
+          required: true
+          description: Unique identifier of the contact whose actions are to be retrieved.
+          schema:
+            type: string
+          example: abc123
+        - name: xLanguage
+          in: header
+          required: false
+          description: Preferred language for action descriptions.
+          schema:
+            type: string
+          example: en
+        - name: xCurrency
+          in: header
+          required: false
+          description: Currency code used to localize action-related information.
+          schema:
+            type: string
+          example: USD
+      responses:
+        '200':
+          $ref: '#/components/responses/responseGetContactActions'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /contact/tiers:
+    get:
+      summary: Get Contact Tiers
+      security: []
+      tags:
+        - tiers
+      description: Retrieve tier information for the specified contact. Optional headers allow localization by language and market.
+      operationId: getContactTiers
+      parameters:
+        - name: xContactId
+          in: header
+          required: true
+          description: Unique identifier of the contact.
+          schema:
+            type: string
+          example: abc123
+        - name: xLanguage
+          in: header
+          required: false
+          description: Preferred language for tier information.
+          schema:
+            type: string
+          example: en
+        - name: xMarket
+          in: header
+          required: false
+          description: Market context to localize tier logic or names.
+          schema:
+            type: string
+          example: JP
+      responses:
+        '200':
+          $ref: '#/components/responses/responseGetContactTiers'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /contact/tiers/downgrade:
+    put:
+      summary: Downgrade Contact Tiers
+      security: []
+      tags:
+        - tiers
+      description: Downgrade the contact's tier. Optional headers may define the target tier, reason for the change, and exit type.
+      operationId: downgradeContactTiers
+      parameters:
+        - name: xContactId
+          in: header
+          required: true
+          description: Unique identifier of the contact whose tier is to be downgraded.
+          schema:
+            type: string
+          example: abc123
+        - name: xExitTo
+          in: header
+          required: false
+          description: Optional target state to exit to after downgrade.
+          schema:
+            type: string
+          example: inactive
+        - name: xReasonForTierChange
+          in: header
+          required: false
+          description: Reason code or explanation for the tier downgrade.
+          schema:
+            type: string
+          example: inactivity
+        - name: xTierId
+          in: header
+          required: false
+          description: Tier ID to downgrade the contact to.
+          schema:
+            type: string
+          example: tier_basic
+      responses:
+        '200':
+          $ref: '#/components/responses/responseSuccess'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /contact/tiers/upgrade:
+    put:
+      summary: Upgrade Contact Tiers
+      security: []
+      tags:
+        - tiers
+      description: Upgrade the contact's tier. Optional headers allow specifying the target tier and the reason for the upgrade.
+      operationId: upgradeContactTiers
+      parameters:
+        - name: xContactId
+          in: header
+          required: true
+          description: Unique identifier of the contact whose tier is to be upgraded.
+          schema:
+            type: string
+          example: abc123
+        - name: xReasonForTierChange
+          in: header
+          required: false
+          description: Reason code or explanation for the tier upgrade.
+          schema:
+            type: string
+          example: achieved_threshold
+        - name: xTierId
+          in: header
+          required: false
+          description: Tier ID to upgrade the contact to.
+          schema:
+            type: string
+          example: tier_gold
+      responses:
+        '200':
+          $ref: '#/components/responses/responseSuccess'
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse'
+components:
+  schemas:
+    resources:
+      type: object
+      required:
+        - displayName
+        - name
+        - type
+        - noDataExpression
+      properties:
+        displayName:
+          type: string
+          enum:
+            - Resource
+        name:
+          type: string
+          enum:
+            - resource
+        type:
+          type: string
+          enum:
+            - options
+        noDataExpression:
+          type: boolean
+          enum:
+            - true
+        default:
+          type: string
+        options:
+          $ref: '#/components/schemas/ResourceOptionList'
+    operations:
+      type: object
+      required:
+        - displayName
+        - name
+        - type
+        - noDataExpression
+        - displayOptions
+        - options
+      properties:
+        displayName:
+          type: string
+          enum:
+            - Action
+        name:
+          type: string
+          enum:
+            - action
+        type:
+          type: string
+          enum:
+            - options
+        noDataExpression:
+          type: boolean
+          enum:
+            - true
+        default:
+          type: string
+          enum:
+            - tiers
+        displayOptions:
+          type: object
+          properties:
+            show:
+              type: object
+              properties:
+                resource:
+                  type: array
+                  items:
+                    type: string
+        options:
+          type: array
+          items:
+            type: object
+            required:
+              - name
+              - value
+            properties:
+              name:
+                type: string
+              value:
+                type: string
+    ResourceOption:
+      type: object
+      required:
+        - name
+        - value
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    ResourceOptionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/ResourceOption'
+      default:
+        - name: Contact
+          value: contact
+        - name: Plan
+          value: plan
+        - name: Actions
+          value: action
+        - name: Tiers
+          value: tiers
+  responses:
+    responseSuccess:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    ValidationErrorResponse:
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              errors:
+                type: array
+                items:
+                  type: string
+    NotFoundErrorResponse:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    ServerErrorResponse:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    responseGetContactLoyaltyInfo:
+      description: Get Contact Loyalty Info
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              loyaltyPoints:
+                type: integer
+              loyaltyStatus:
+                type: string
+              loyaltyTier:
+                type: string
+    responseGetHashedXContactId:
+      description: Get Hashed XContact ID
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              hashedXContactId:
+                type: string
+                description: The hashed XContact ID for the contact.
+    responseGetContactActivities:
+      description: Get Contact Activities
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              activities:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    activityId:
+                      type: string
+                    activityType:
+                      type: string
+                    activityDate:
+                      type: string
+                    activityDescription:
+                      type: string
+    responseGetProgramSettings:
+      description: Get Program Settings
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              programSettings:
+                type: object
+                properties:
+                  planId:
+                    type: string
+                  planName:
+                    type: string
+                  planDescription:
+                    type: string
+                  planBenefits:
+                    type: array
+                    items:
+                      type: string
+    responseGetContactActions:
+      description: Get Contact Actions
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              actions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    actionId:
+                      type: string
+                    actionName:
+                      type: string
+                    actionDescription:
+                      type: string
+                    actionType:
+                      type: string
+    responseGetContactTiers:
+      description: Get Contact Tiers
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tiers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tierId:
+                      type: string
+                    tierName:
+                      type: string
+                    tierDescription:
+                      type: string
+                    tierLevel:
+                      type: integer

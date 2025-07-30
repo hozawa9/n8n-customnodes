@@ -1,0 +1,42 @@
+get:
+  summary: Get Contact Actions
+  security: []
+  tags:
+    - actions
+  description: Retrieve available actions for the specified contact. Supports localization using language and currency headers.
+  operationId: getContactActions
+
+  parameters:
+    - name: xContactId
+      in: header
+      required: true
+      description: Unique identifier of the contact whose actions are to be retrieved.
+      schema:
+        type: string
+      example: abc123
+
+    - name: xLanguage
+      in: header
+      required: false
+      description: Preferred language for action descriptions.
+      schema:
+        type: string
+      example: en
+
+    - name: xCurrency
+      in: header
+      required: false
+      description: Currency code used to localize action-related information.
+      schema:
+        type: string
+      example: USD
+
+  responses:
+    '200':
+      $ref: '../components/responses.yaml#/components/responses/responseGetContactActions'
+    '400':
+      $ref: '../components/responses.yaml#/components/responses/ValidationErrorResponse'
+    '404':
+      $ref: '../components/responses.yaml#/components/responses/NotFoundErrorResponse'
+    '500':
+      $ref: '../components/responses.yaml#/components/responses/ServerErrorResponse'

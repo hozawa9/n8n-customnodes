@@ -1,0 +1,111 @@
+openapi: 3.0.0
+info:
+  title: Emarsys Loyalty API
+  version: 1.0.0
+
+servers:
+  - url: https://contact-api.loyalsys.io/api/v4
+tags: []
+
+paths:
+  # Resource - Contact
+  /contact/:
+    $ref: 'functions/deleteContact.yaml'
+  /contact/join:
+    $ref: 'functions/addContact.yaml'
+  /contact/contact:
+    $ref: 'functions/getContactLoyaltyInfo.yaml'
+  /contact/hash:
+    $ref: 'functions/getHashedXContactId.yaml'
+  /contact/activities:
+    $ref: 'functions/getContactActivities.yaml'
+
+  # Resource - Plans
+  /contact/changeplans:
+    $ref: 'functions/changeContactLoyaltyPlan.yaml'
+  /contact/programSettings:
+    $ref: 'functions/getProgramSettings.yaml'
+
+  # Resource - Actions
+  /contact/actions:
+    $ref: 'functions/getContactActions.yaml'
+
+  # Resource - Tiers
+  /contact/tiers:
+    $ref: 'functions/getContactTiers.yaml'
+  /contact/tiers/downgrade:
+    $ref: 'functions/downgradeContactTiers.yaml'
+  /contact/tiers/upgrade:
+    $ref: 'functions/upgradeContactTiers.yaml'
+
+components:
+  schemas:
+    resources:
+      type: object
+      required: [displayName, name, type, noDataExpression]
+      properties:
+        displayName:
+          type: string
+          enum: [Resource]
+        name:
+          type: string
+          enum: [resource]
+        type:
+          type: string
+          enum: [options]
+        noDataExpression:
+          type: boolean
+          enum: [true]
+        default:
+          type: string
+        options:
+          $ref: './components/resources.yaml#/ResourceOptionList'
+
+    operations:
+      type: object
+      required:
+        - displayName
+        - name
+        - type
+        - noDataExpression
+        - displayOptions
+        - options
+      properties:
+        displayName:
+          type: string
+          enum: [Action]
+        name:
+          type: string
+          enum: [action]
+        type:
+          type: string
+          enum: [options]
+        noDataExpression:
+          type: boolean
+          enum: [true]
+        default:
+          type: string
+          enum:
+            - tiers
+        displayOptions:
+          type: object
+          properties:
+            show:
+              type: object
+              properties:
+                resource:
+                  type: array
+                  items:
+                    type: string
+        options:
+          type: array
+          items:
+            type: object
+            required:
+              - name
+              - value
+            properties:
+              name:
+                type: string
+              value:
+                type: string
