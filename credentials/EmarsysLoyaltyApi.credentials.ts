@@ -1,49 +1,40 @@
 import {
   ICredentialType,
-	INodeProperties,
+	NodePropertyTypes,
 } from 'n8n-workflow';
 
 const credentialParam = require('./headerAuthCredentialParams_emarsysLoyaltyApi.json') as {
 	name: string;
 	displayName: string;
 	documentationUrl: string;
-	properties: Array<{
-		name: string;
-		displayName: string;
-	}>;
+	properties: Array<{	name: string; displayName: string; }>;
 };
 
 export class EmarsysLoyaltyApi implements ICredentialType {
-  name = credentialParam?.name;
-  displayName = credentialParam?.displayName;
-  documentationUrl = credentialParam?.documentationUrl;
-  properties: INodeProperties[] = [
+  name = credentialParam.name;
+	extends = ['httpHeaderAuth'];
+  displayName = credentialParam.displayName;
+  documentationUrl = credentialParam.documentationUrl;
+
+  properties = [
     {
-      displayName: 'Name',
-      name: 'x-api-key',
-      type: 'string',
-      default: '',
+      displayName: credentialParam.properties[0].displayName,
+      name: 'name',
+      type: 'hidden' as NodePropertyTypes,
+      default: credentialParam.properties[0].name,
       required: true,
-      description: '',
+      description: 'the name of key for the header',
     },
     {
-      displayName: 'Value',
-      name: credentialParam?.properties[1]?.name,
-      type: 'string',
+      displayName: credentialParam.properties[1].displayName,
+      name: credentialParam.properties[1].name,
+      type: 'string' as NodePropertyTypes,
       default: '',
       required: true,
-      description: '',
+      description: 'the value of key for the header',
+			typeOptions: { password: true },
     },
   ];
-
-  authenticate = {
-    type: 'generic' as const,
-    properties: {
-      headers: {
-        '={{$credentials.name}}': '={{$credentials.value}}',
-      },
-    },
-  };
 }
 
 module.exports = {

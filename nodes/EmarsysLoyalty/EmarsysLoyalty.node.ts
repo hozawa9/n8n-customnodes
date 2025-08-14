@@ -82,13 +82,16 @@ export class EmarsysLoyalty implements INodeType {
 		icon: description.icon,
 		group: description.group,
 		version: description.version,
-		description: '',
-		defaults: description.defaults,
+		subtitle: '={{$parameter["resource"] + ": " + $parameter["action"]}}',
+		description: 'This node is creatred from the custom node template',
+		defaults: {
+			name: '',
+		},
 		inputs: ['main' as NodeConnectionType],
 		outputs: ['main' as NodeConnectionType],
 		credentials: description.credentials,
-		requestDefaults: {baseURL: description.requestDefaults?.baseURL},
-		properties: typedProperties
+		properties: typedProperties,
+		requestDefaults: description.requestDefaults,
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
